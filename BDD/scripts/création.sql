@@ -149,3 +149,25 @@ BEGIN
 END|
 
 DELIMITER ;
+
+-- Trigger pour vérifier qu'un cours n'est pas réservé par trop de personnes
+DELIMITER |
+CREATE TRIGGER cours_plein
+BEFORE INSERT ON Reserver
+FOR EACH ROW
+BEGIN
+    DECLARE nbPersonneTotale INTEGER;
+    DECLARE nbPersonneInscrite INTEGER;
+    SELECT COUNT(idAdherent),NbPersonne INTO nbPersonneInscrite, nbPersonneTotale
+    FROM Reserver NATURAL join CoursRealise
+    WHERE idCoursRealise = NEW.idCoursRealise;
+
+    IF nbPersonneInscrite > nbPersonneTotale THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Le nombre d''adhérents inscrits est supérieur au nombre total de places disponibles.';
+    END IF;
+END
+|
+
+DELIMITER ;
+
