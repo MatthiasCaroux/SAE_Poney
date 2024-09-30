@@ -171,3 +171,20 @@ END
 
 DELIMITER ;
 
+-- Trigger pour vérifier qu'un poney n'est pas trop lourd pour un adhérent
+DELIMITER |
+CREATE TRIGGER Poids_Trop_Lourd
+BEFORE INSERT ON Reserver
+FOR EACH ROW
+BEGIN
+    DECLARE poidsAdherent DECIMAL(5,2);
+    DECLARE chargeMaxPoney DECIMAL(5,2);
+    SELECT poids, charge_max INTO poidsAdherent, chargeMaxPoney 
+    FROM Adherent NATURAL join RESERVER NATURAL JOIN PONEY WHERE idAdherent = NEW.idAdherent;
+
+    IF poidsAdherent > chargeMaxPoney THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Le poids de l''adhérent dépasse la charge maximale du poney.';
+    END IF;
+END |
+delimiter ;
