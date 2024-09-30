@@ -110,3 +110,42 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+DELIMITER |
+
+CREATE TRIGGER verif_moniteur_cours
+BEFORE INSERT ON Anime
+FOR EACH ROW
+BEGIN
+    DECLARE heureDebutCoursNew TIME;
+    DECLARE heureFinCoursNew TIME;
+    DECLARE moniteurConflit INTEGER;
+
+    SELECT Heure, ADDTIME(Heure, SEC_TO_TIME(Duree * 3600)) INTO heureDebutCoursNew, heureFinCoursNew
+    FROM CoursProgramme
+    WHERE idCours = NEW.idCours;
+
+    SELECT COUNT(*)
+    INTO moniteurConflit
+    FROM CoursProgramme cp
+    JOIN CoursRealise cr ON cr.idCours = cp.idCours
+    JOIN Anime a ON a.idCours = cr.idCoursRealise
+    WHERE a.idMoniteur = NEW.idMoniteur
+    AND cr.DateJour = (SELECT DateJour FROM CoursRealise WHERE idCoursRealise = NEW.idCours)
+    AND (
+        (heureDebutCoursNew BETWEEN cp.Heure AND ADDTIME(cp.Heure, SEC_TO_TIME(cp.Duree * 3600)))
+        OR
+        (heureFinCoursNew BETWEEN cp.Heure AND ADDTIME(cp.Heure, SEC_TO_TIME(cp.Duree * 3600)))
+        OR
+        (cp.Heure BETWEEN heureDebutCoursNew AND heureFinCoursNew)
+    );
+
+    IF moniteurConflit > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Un moniteur ne peut pas faire plusieurs cours en même temps.';
+    END IF;
+
+END|
+
+DELIMITER ;
