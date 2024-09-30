@@ -29,7 +29,7 @@ CREATE TABLE `Adherent` (
     `poids` DECIMAL(5,2),
     `nom` VARCHAR(50),
     `cotisation` BOOLEAN,
-    `Telephone` VARCHAR(20),
+    `Telephone` VARCHAR(20) CHECK (Telephone REGEXP '^[0-9]{10}$'),
     PRIMARY KEY(`idAdherent`)
 );
 
@@ -42,7 +42,7 @@ CREATE TABLE `CoursProgramme` (
     `Heure` TIME,
     `Prix` DECIMAL(10,2),
     `Niveau` VARCHAR(20),
-    `NbPersonne` INTEGER,
+    `NbPersonne` INTEGER CHECK (`NbPersonne` <= 10),
     PRIMARY KEY(`idCours`)
 );
 
@@ -78,47 +78,35 @@ CREATE TABLE `Anime` (
     FOREIGN KEY(`idCours`) REFERENCES `CoursRealise`(`idCoursRealise`) ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
--- Insertion des données dans la table Moniteur
-INSERT INTO `Moniteur` (`Prenom`, `nom`) VALUES
-('Jean', 'Dupont'),
-('Marie', 'Durand'),
-('Pierre', 'Martin');
 
--- Insertion des données dans la table Poney
-INSERT INTO `Poney` (`nomPoney`, `charge_max`) VALUES
-('Bella', 50.00),
-('Charlie', 55.00),
-('Daisy', 60.00);
+-- Permet de verifier que l'on peut faire une reservation
 
--- Insertion des données dans la table Adherent
-INSERT INTO `Adherent` (`poids`, `nom`, `cotisation`, `Telephone`) VALUES
-(45.50, 'Alice', TRUE, '0601020304'),
-(52.00, 'Bob', FALSE, '0605060708'),
-(48.00, 'Clara', TRUE, '0608091011');
+DELIMITER $$
 
--- Insertion des données dans la table CoursProgramme
-INSERT INTO `CoursProgramme` (`Duree`, `DateJour`, `Semaine`, `Heure`, `Prix`, `Niveau`, `NbPersonne`) VALUES
-(2, '2023-11-15', 46, '10:00:00', 50.00, 'Débutant', 8),
-(3, '2023-11-16', 46, '14:00:00', 75.00, 'Intermédiaire', 6),
-(1, '2023-11-17', 46, '16:00:00', 40.00, 'Avancé', 4);
+CREATE TRIGGER `before_insert_reserver`
+BEFORE INSERT ON `Reserver`
+FOR EACH ROW
+BEGIN
+    DECLARE adherent_poids DECIMAL(5,2);
+    DECLARE poney_charge_max DECIMAL(5,2);
+    DECLARE cotisation_valide BOOLEAN;
 
--- Insertion des données dans la table CoursRealise
-INSERT INTO `CoursRealise` (`DateJour`, `Semaine`, `Mois`, `idCours`) VALUES
-('2023-11-15', 46, 11, 1),
-('2023-11-16', 46, 11, 2),
-('2023-11-17', 46, 11, 3);
+    -- Récupération du poids de l'adhérent
+    SELECT poids, cotisation INTO adherent_poids, cotisation_valide FROM Adherent WHERE idAdherent = NEW.idAdherent;
 
--- Insertion des données dans la table Reserver
-INSERT INTO `Reserver` (`idCoursRealise`, `idAdherent`, `idPoney`) VALUES
-(1, 1, 1),
-(1, 2, 2),
-(2, 1, 3),
-(2, 3, 1),
-(3, 2, 2),
-(3, 3, 3);
+    -- Vérification de la cotisation
+    IF cotisation_valide = FALSE THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La cotisation de l\'adhérent n\'est pas à jour.';
+    END IF;
 
--- Insertion des données dans la table Anime
-INSERT INTO `Anime` (`idMoniteur`, `idCours`) VALUES
-(1, 1),
-(2, 2),
-(3, 3);
+    -- Récupération de la charge maximale du poney
+    SELECT charge_max INTO poney_charge_max FROM Poney WHERE idPoney = NEW.idPoney;
+
+    -- Vérification du poids de l'adhérent par rapport à la charge maximale du poney
+    IF adherent_poids > poney_charge_max THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Le poids de l\'adhérent dépasse la charge maximale du poney.';
+    END IF;
+
+END$$
+
+DELIMITER ;
