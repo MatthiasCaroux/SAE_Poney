@@ -36,7 +36,7 @@ CREATE TABLE `Adherent` (
 -- Création de la table CoursProgramme
 CREATE TABLE `CoursProgramme` (
     `idCours` INTEGER AUTO_INCREMENT,
-    `Duree` INTEGER,
+    `Duree` INTEGER CHECK (`Duree` <= 2 ),
     `DateJour` DATE,
     `Semaine` INTEGER,
     `Heure` TIME,
@@ -188,3 +188,27 @@ BEGIN
     END IF;
 END |
 delimiter ;
+
+-- Trigger pour vérifier qu'un poney n'est pas en état de repos
+DELIMITER |
+CREATE TRIGGER Poney_repose
+BEFORE INSERT ON Reserver
+FOR EACH ROW
+BEGIN
+    DECLARE conflict_count INT;
+
+    SELECT COUNT(*)
+    INTO conflict_count
+    FROM Reserver
+    WHERE idPoney = NEW.idPoney
+    AND DateJour = NEW.DateJour
+    AND TIMESTAMPADD(HOUR, Duree, Heure) <= TIMESTAMPADD(HOUR, -1, NEW.Heure);
+
+    -- Si on trouve un conflit, on lève une erreur
+    IF conflict_count > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Le poney est déjà réservé dans l\'heure précédente ou suivante.';
+    END IF;
+END;
+|
+DELIMITER ;
