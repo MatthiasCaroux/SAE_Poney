@@ -212,3 +212,19 @@ BEGIN
 END;
 |
 DELIMITER ;
+-- Trigger pour vérifier qu'un adhérent à payer sa cotisation lors d'une réservation
+DELIMITER |
+CREATE TRIGGER Cotisation_Pas_Payer
+BEFORE INSERT ON Reserver
+FOR EACH ROW
+DECLARE
+    cotisation BOOLEAN;
+BEGIN
+SELECT cotisation INTO cotisation
+FROM Adherent
+WHERE idAdherent = NEW.idAdherent;
+IF cotisation = FALSE THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'L''adhérent n''a pas payé sa cotisation.';
+END IF;
+END;
