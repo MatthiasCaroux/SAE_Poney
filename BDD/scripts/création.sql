@@ -204,10 +204,9 @@ BEGIN
     AND DateJour = NEW.DateJour
     AND TIMESTAMPADD(HOUR, Duree, Heure) <= TIMESTAMPADD(HOUR, -1, NEW.Heure);
 
-    -- Si on trouve un conflit, on lève une erreur
     IF conflict_count > 0 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Le poney est déjà réservé dans l\'heure précédente ou suivante.';
+        SET MESSAGE_TEXT = 'Le poney est pas repose ';
     END IF;
 END;
 |
