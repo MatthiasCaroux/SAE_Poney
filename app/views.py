@@ -35,6 +35,36 @@ def login():
     return render_template("login.html")
 
 
+@app.route("/reservation/")
+def reservation():
+    return render_template("reservation.html")
+
+from flask import jsonify
+
+@app.route('/api/events')
+def get_events():
+    events = [
+        {"title": "Événement 1", "start": "2024-11-25"},
+        {"title": "Événement 2", "start": "2024-11-28", "end": "2024-11-30"}
+    ]
+    return jsonify(events)
+
+
+@app.route("/reservation/")
+def reservation():
+    return render_template("reservation.html")
+
+from flask import jsonify
+
+@app.route('/api/events')
+def get_events():
+    events = [
+        {"title": "Événement 1", "start": "2024-11-25"},
+        {"title": "Événement 2", "start": "2024-11-28", "end": "2024-11-30"}
+    ]
+    return jsonify(events)
+
+
 @app.route("/poney")
 def poney():
     return render_template("poney.html", poney=get_poney()[:10])
