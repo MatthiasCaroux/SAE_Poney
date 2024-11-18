@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static' , filename = 'login.css')}}">
+{% endblock %}
+{% block content %}
+<h1>Se connecter</h1>
+<div class="rectangle">
+    <form action="/login/" method="get">
+        <h2>Connexion à IUT’O TROT</h2>
+        <div class="inline">
+            <input type="text" name="username" id="username" class="form-control form-control-lg" placeholder="Nom d'utilisateur">
+        </div>
+        <div class="inline">
+            <input type="password" name="password" id="password" class="form-control form-control-lg" placeholder="Mot de passe">
+        </div>
+        <button class ="bouton" type="submit">Connexion</button>
+
+    </form>
+</div>
+{% endblock %}
