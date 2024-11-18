@@ -211,7 +211,6 @@ BEGIN
         TIMESTAMP(CR_NEW.DateJour, TIMESTAMPADD(HOUR, 1, CR_NEW.Heure))
       );
 
-    -- Si un conflit est détecté, lever une exception
     IF conflict_count > 0 THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Le poney ne peut pas être réservé car il est déjà occupé une heure avant ou après.';
