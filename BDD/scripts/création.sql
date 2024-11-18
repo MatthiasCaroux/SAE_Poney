@@ -197,20 +197,29 @@ FOR EACH ROW
 BEGIN
     DECLARE conflict_count INT;
 
+    -- Vérification des conflits avec un cours 1 heure avant ou après
     SELECT COUNT(*)
     INTO conflict_count
-    FROM Reserver
-    WHERE idPoney = NEW.idPoney
-    AND DateJour = NEW.DateJour
-    AND TIMESTAMPADD(HOUR, Duree, Heure) <= TIMESTAMPADD(HOUR, -1, NEW.Heure);
+    FROM Reserver R
+    INNER JOIN CoursRealise CR ON R.idCoursRealise = CR.idCoursRealise
+    INNER JOIN CoursRealise CR_NEW ON CR_NEW.idCoursRealise = NEW.idCoursRealise
+    WHERE R.idPoney = NEW.idPoney
+      AND CR.DateJour = CR_NEW.DateJour
+      AND (
+        TIMESTAMP(CR.DateJour, CR.Heure) BETWEEN 
+        TIMESTAMP(CR_NEW.DateJour, TIMESTAMPADD(HOUR, -1, CR_NEW.Heure)) AND 
+        TIMESTAMP(CR_NEW.DateJour, TIMESTAMPADD(HOUR, 1, CR_NEW.Heure))
+      );
 
+    -- Si un conflit est détecté, lever une exception
     IF conflict_count > 0 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Le poney est pas repose ';
+        SET MESSAGE_TEXT = 'Le poney ne peut pas être réservé car il est déjà occupé une heure avant ou après.';
     END IF;
 END;
 |
 DELIMITER ;
+
 -- Trigger pour vérifier qu'un adhérent à payer sa cotisation lors d'une réservation
 DELIMITER |
 CREATE TRIGGER Cotisation_Pas_Payer
