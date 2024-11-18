@@ -13,10 +13,11 @@ class Poney:
 
 def get_poney():
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM PONEY")
+    cursor.execute("SELECT * FROM Poney")
     poney = cursor.fetchall()
     cursor.close()
     res = []
+    print(poney)
     for p in poney:
         res.append(Poney(p[0], p[1], p[2]))
     return res

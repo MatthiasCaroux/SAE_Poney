@@ -218,4 +218,5 @@ IF cotisation = FALSE THEN
     SIGNAL SQLSTATE '45000'
     SET MESSAGE_TEXT = 'L''adhérent n''a pas payé sa cotisation.';
 END IF;
-END;
+END; |
+DELIMITER ;

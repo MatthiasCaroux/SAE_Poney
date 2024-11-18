@@ -9,5 +9,4 @@ def home():
 
 @app.route("/poney")
 def poney():
-
     return render_template("poney.html", poney=get_poney()[:10])
