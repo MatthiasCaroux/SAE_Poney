@@ -2,8 +2,13 @@ h1{
     margin: 10px;
     padding: 20px;
     text-align: center;
+    font-size: 80px;
     position: center;
-    font-style: bold;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    font-weight: bold;
 }
 
 button{
@@ -18,10 +23,15 @@ button{
 
 .inline {
     border-radius: 8%;
-    margin: 5px;
+    margin: 10px;
     padding: 10px;
     justify-content: space-around;
     text-align: center;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    font-weight: bold;
 }
 
 .rectangle {
@@ -33,12 +43,28 @@ button{
     border-radius: 3%;
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
     width: 500px;
+    height: 350px;
 
     
 }
 
 .bouton {
     margin-top: 10px;
-    width: 100px;
+    width: 200px;
     height: 50px;
+    border-radius: 10px;
+    align-self: center;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    font-weight: bold;
+}
+
+h2{
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    font-weight: bold;
 }
