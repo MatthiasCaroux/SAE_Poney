@@ -14,6 +14,7 @@ def mkpath(p):
 
 app = Flask(__name__)
 
+
 app.config['MYSQL_HOST'] = 'servinfo-maria'
 app.config['MYSQL_USER'] = 'niveau'
 app.config['MYSQL_PASSWORD'] = 'niveau'

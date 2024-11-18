@@ -27,6 +27,11 @@ button{
     padding: 10px;
     justify-content: space-around;
     text-align: center;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    font-weight: bold;
 }
 
 .rectangle {
@@ -49,4 +54,17 @@ button{
     height: 50px;
     border-radius: 10px;
     align-self: center;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    font-weight: bold;
+}
+
+h2{
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    font-weight: bold;
 }
