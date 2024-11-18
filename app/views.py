@@ -1,5 +1,7 @@
-from app import app
+# from app import app
 from flask import render_template
+from app.models import *
+
 from flask import request
 from .models import User
 from flask_login import login_user
@@ -31,3 +33,9 @@ def login():
             flash("Nom d'utilisateur ou mot de passe incorrect.", "danger")
 
     return render_template("login.html")
+
+
+@app.route("/poney")
+def poney():
+
+    return render_template("poney.html", poney=get_poney()[:10])

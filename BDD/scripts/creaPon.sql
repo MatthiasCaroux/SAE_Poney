@@ -69,6 +69,11 @@ CREATE TABLE `Anime` (
     FOREIGN KEY(`idCours`) REFERENCES `CoursRealise`(`idCoursRealise`) ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
+CREATE TABLE `User` (
+    Username VARCHAR(50),
+    password VARCHAR(50),
+    PRIMARY KEY(Username)
+);
 
 -- Permet de verifier que l'on peut faire une reservation
 
@@ -87,7 +92,7 @@ BEGIN
 
     -- Vérification de la cotisation
     IF cotisation_valide = FALSE THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La cotisation de l\'adhérent n\'est pas à jour.';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "La cotisation de l'adhérent n'est pas à jour.";
     END IF;
 
     -- Récupération de la charge maximale du poney
@@ -95,7 +100,7 @@ BEGIN
 
     -- Vérification du poids de l'adhérent par rapport à la charge maximale du poney
     IF adherent_poids > poney_charge_max THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Le poids de l\'adhérent dépasse la charge maximale du poney.'';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Le poids de l'adhérent dépasse la charge maximale du poney.";
     END IF;
 
 END$$
@@ -155,7 +160,7 @@ BEGIN
 
     IF nbPersonneInscrite > nbPersonneTotale THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Le nombre d''adhérents inscrits est supérieur au nombre total de places disponibles.';
+        SET MESSAGE_TEXT = "Le nombre d'adhérents inscrits est supérieur au nombre total de places disponibles.";
     END IF;
 END
 |
@@ -175,11 +180,12 @@ BEGIN
 
     IF poidsAdherent > chargeMaxPoney THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Le poids de l''adhérent dépasse la charge maximale du poney.';
+        SET MESSAGE_TEXT = "Le poids de l'adhérent dépasse la charge maximale du poney.";
     END IF;
 END |
 delimiter ;
 
+/*
 -- Trigger pour vérifier qu'un poney n'est pas en état de repos
 DELIMITER |
 CREATE TRIGGER Poney_repose
@@ -198,24 +204,27 @@ BEGIN
     -- Si on trouve un conflit, on lève une erreur
     IF conflict_count > 0 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Le poney est déjà réservé dans l\'heure précédente ou suivante.';
+        SET MESSAGE_TEXT = "Le poney est déjà réservé dans l'heure précédente ou suivante.";
     END IF;
 END;
 |
 DELIMITER ;
+*/
+
 -- Trigger pour vérifier qu'un adhérent à payer sa cotisation lors d'une réservation
 DELIMITER |
 CREATE TRIGGER Cotisation_Pas_Payer
 BEFORE INSERT ON Reserver
 FOR EACH ROW
-DECLARE
-    cotisation BOOLEAN;
+DECLARE cotisation BOOLEAN;
 BEGIN
 SELECT cotisation INTO cotisation
 FROM Adherent
 WHERE idAdherent = NEW.idAdherent;
 IF cotisation = FALSE THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'L''adhérent n''a pas payé sa cotisation.';
+    SET MESSAGE_TEXT = "L'adhérent n'a pas payé sa cotisation.";
 END IF;
 END;
+|
+DELIMITER ;
