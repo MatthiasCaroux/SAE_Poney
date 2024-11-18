@@ -2,31 +2,76 @@
     background-color: white;
     padding: 10px 20px;
 }
-.navbar-custom .nav-link {
+
+.navbar-brand {
+    margin-right: 100px;
+}
+
+.navbar-nav {
+    display: flex;
+    justify-content: space-between; /* Sépare les deux groupes de boutons */
+    align-items: center;
+    width: 100%;
+}
+
+.navbar-nav .nav-link {
     border: 1px solid #000;
-    border-radius: 20px;
-    padding: 5px 15px;
-    margin-right: 10px;
     color: #000;
+    text-align: center;
+    font-size: 1.2em;
+    padding: 15px 25px; /* Ajuste la hauteur des boutons */
+    margin: 0 5px; /* Marges horizontales par défaut */
+    flex: 1; /* Assure une largeur égale pour tous les boutons principaux */
+    border-radius: 5px; /* Bordures arrondies */
+    white-space: nowrap;
+
 }
+
+/* Boutons principaux */
+.navbar-nav .nav-link:not(.login):not(.signup) {
+    flex: 1; /* Les boutons principaux occupent le même espace */
+}
+
+/* Hover effet pour les liens */
 .navbar-custom .nav-link:hover {
-    background-color: #f8f9fa;
+    background-color: #bbbbbb;
 }
+
+/* Bouton "Se connecter" */
+.nav-link.login {
+    margin-left: 100px; /* Décale "Se connecter" des autres boutons */
+    background-color: #d3d3d3;
+    color: #000000;
+    flex: 1; /* Empêche "Se connecter" d'occuper plus d'espace que nécessaire */
+}
+
+/* Bouton "S'inscrire" */
 .nav-link.signup {
     background-color: #001f3f;
+    margin-left: 10px; /* Écart avec "Se connecter" */
     color: #fff;
     font-weight: bold;
-}
-.nav-link.login {
-    background-color: #d3d3d3;
-    color: #6c757d;
+    flex: 1; /* Empêche "S'inscrire" d'occuper plus d'espace que nécessaire */
 }
 
+/* Logo */
 #image_nav {    
-    border-radius: 50%;
+    border-radius: 5%;
     margin-right: 10px;
 }
 
+/* Ombre pour la navbar */
 nav {
-    align-items: center;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Structure globale */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
 }
