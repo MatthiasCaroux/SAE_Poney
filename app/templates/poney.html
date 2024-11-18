@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{%block styles%}
+    {{super()}}
+    <link rel="stylesheet" href="{{ url_for('static', filename='poney.css') }}">
+{%endblock%}
+{% block content %}
+<h1>La liste de nos poneys</h1>
+<h2>Vous pourrez les réserver dans la section "Réservation"</h2>
+{% for p in poney %}
+<div class="poney">
+    <div class="poney-header">
+        <h1>{{ p.nomPoney }}</h1>
+    </div>
+    <div class="poney-body">
+        <img src="{{ url_for('static', filename='images/poneydefault.jpg') }}" alt="poney">
+        <div class="poney-info">
+            <p>{{ p.description }}</p>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
