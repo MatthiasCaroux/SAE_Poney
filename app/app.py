@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_login import LoginManager
+from flask_mysqldb import MySQL
 from flask_sqlalchemy import SQLAlchemy
 
 import os.path
@@ -19,9 +20,6 @@ app.config['MYSQL_HOST'] = 'servinfo-maria'
 app.config['MYSQL_USER'] = 'niveau'
 app.config['MYSQL_PASSWORD'] = 'niveau'
 app.config['MYSQL_DB'] = 'DBniveau' #mettre sa propre BD
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-    'sqlite:///' + mkpath('../myapp.db')
-)
 
 
 db = SQLAlchemy(app)
