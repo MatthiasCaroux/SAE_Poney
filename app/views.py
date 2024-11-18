@@ -6,10 +6,10 @@ from flask_login import login_user
 from flask import flash, redirect, url_for
 
 
+
 @app.route("/")
 def home():
     return render_template("home.html")
-
 
 
 
