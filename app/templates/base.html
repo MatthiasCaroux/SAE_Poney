@@ -38,7 +38,7 @@
                 <div class="d-flex">
                     {% if not userlog %}
                     <a class="nav-item nav-link login text-center" href="{{ url_for('login') }}">Se connecter</a>
-                    <a class="nav-item nav-link signup text-center" href="#">S'inscrire</a>
+                    <a class="nav-item nav-link signup text-center" href="{{ url_for('register') }}">S'inscrire</a>
                     {% else %}
                     <a href="{{ url_for('logout') }}">
                         <img class="nav-item nav-link icon text-center" src="{{ url_for('static', filename='images/avatar.png') }}" alt="avatar" class="avatar">

@@ -66,6 +66,35 @@ def logout():
     userlog = False
     return render_template("home.html", userlog = userlog)
 
+@app.route("/register/", methods=["GET", "POST"])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        poids = request.form['poids']
+        nom = request.form['nom']
+        cotisation = request.form['cotisation']
+        telephone = request.form['telephone']
+        
+        cursor = mysql.connection.cursor()
+        query = "SELECT username FROM User WHERE username = %s"
+        cursor.execute(query, (username,))
+        user = cursor.fetchone()
+        cursor.close()
+
+        if user:
+            error_message = "Ce nom d'utilisateur est déjà utilisé"
+            return render_template("register.html", error_message=error_message, user = user)
+
+        query = "INSERT INTO User (username, password, email, poids, nom, cotisation, telephone) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        cursor = mysql.connection.cursor()
+        cursor.execute(query, (username, password, email, poids, nom, cotisation, telephone))
+        mysql.connection.commit()
+        cursor.close()
+        return render_template("register.html", user = user)
+    return render_template("register.html")
+
 @app.route("/poney")
 def poney():
     return render_template("poney.html", poney=get_poney()[:10])
