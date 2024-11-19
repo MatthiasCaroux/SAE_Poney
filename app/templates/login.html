@@ -9,6 +9,9 @@
 <div class="rectangle">
     <form action="/login/" role="form" method ="POST" action ="{{ url_for ('login') }}">
         <h2>Connexion à IUT’O TROT</h2>
+        {% if error_message %}
+        <p class="error"><strong>Erreur:</strong> {{ error_message }}</p>
+        {% endif %}
         <div class="inline">
             <input type="text" name="username" id="username" class="form-control form-control-lg" placeholder="Nom d'utilisateur">
         </div>
