@@ -45,6 +45,13 @@
     flex: 1; /* Empêche "Se connecter" d'occuper plus d'espace que nécessaire */
 }
 
+.nav-link.icon {
+    border : none;
+    margin-left: 50px; /* Décale "l'icone" des autres boutons */
+
+
+}
+
 /* Bouton "S'inscrire" */
 .nav-link.signup {
     background-color: #001f3f;

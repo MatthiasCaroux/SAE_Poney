@@ -34,6 +34,7 @@ button{
     font-weight: bold;
 }
 
+
 .rectangle {
 
     margin: 0 auto;
@@ -44,8 +45,6 @@ button{
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
     width: 500px;
     height: 350px;
-
-    
 }
 
 .bouton {
@@ -67,4 +66,10 @@ h2{
     font-weight: 100;
     font-style: normal;
     font-weight: bold;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+    font-family: "Inter", sans-serif;
 }
