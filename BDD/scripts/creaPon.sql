@@ -5,7 +5,11 @@ CREATE TABLE `Moniteur` (
     `nom` VARCHAR(50),
     PRIMARY KEY(`idMoniteur`)
 );
-
+CREATE TABLE `User` (
+    Username VARCHAR(50),
+    password VARCHAR(50),
+    PRIMARY KEY(Username)
+);
 -- Création de la table Poney
 CREATE TABLE `Poney` (
     `idPoney` INTEGER AUTO_INCREMENT,
