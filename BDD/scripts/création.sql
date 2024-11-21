@@ -202,6 +202,7 @@ BEGIN
     FROM Reserver
     WHERE idPoney = NEW.idPoney
     AND DateJour = NEW.DateJour
+    -- NE MARCHE PAS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     AND TIMESTAMPADD(HOUR, Duree, Heure) <= TIMESTAMPADD(HOUR, -1, NEW.Heure);
 
     IF conflict_count > 0 THEN
