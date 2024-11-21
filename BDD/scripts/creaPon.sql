@@ -17,7 +17,7 @@ CREATE TABLE `Poney` (
 -- Création de la table Adherent
 CREATE TABLE `Adherent` (
     `idAdherent` INTEGER AUTO_INCREMENT,
-    `poids` DECIMAL(5,2),
+    `poids` INTEGER,
     `nom` VARCHAR(50),
     `cotisation` BOOLEAN,
     `Telephone` VARCHAR(20) CHECK (Telephone REGEXP '^[0-9]{10}$'),
@@ -70,9 +70,11 @@ CREATE TABLE `Anime` (
 );
 
 CREATE TABLE `User` (
-    Username VARCHAR(50),
-    password VARCHAR(50),
-    PRIMARY KEY(Username)
+    `Username` VARCHAR(50),
+    `password` VARCHAR(50),
+    `idConnexion` INTEGER AUTO_INCREMENT,
+    PRIMARY KEY(`Username`),
+    FOREIGN KEY(`idConnexion`) REFERENCES `Adherent`(`idAdherent`)
 );
 
 -- Permet de verifier que l'on peut faire une reservation

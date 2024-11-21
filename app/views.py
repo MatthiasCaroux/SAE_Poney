@@ -36,6 +36,7 @@ def load_user(username):
 @app.route("/login/", methods=["GET", "POST"])
 def login():
     global userlog
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -44,7 +45,6 @@ def login():
         query = "SELECT username, password FROM User WHERE username = %s"
         cursor.execute(query, (username,))
         user = cursor.fetchone()
-        print(user)
         cursor.close()
 
         if user and user[1] == password:
@@ -55,6 +55,7 @@ def login():
             userlog = False
             error_message = "Nom d'utilisateur ou mot de passe incorrect"
             return render_template("login.html", error_message=error_message, user = user, userlog = userlog)
+        
     return render_template("login.html", user = None, userlog = userlog)
 
 
@@ -66,12 +67,24 @@ def logout():
     userlog = False
     return render_template("home.html", userlog = userlog)
 
+@app.route("/profile/")
+@login_required
+def profile():
+    global userlog
+    cursor = mysql.connection.cursor()
+    query = "SELECT * FROM User  natural join Adherent WHERE username = %s and User.idConnexion = Adherent.idAdherent"
+    cursor.execute(query, (current_user.username,))
+    user = cursor.fetchone()
+    cursor.close()
+    print(current_user.username)
+    userlog = True
+    return render_template("compte.html", user = user, userlog = userlog)
+
 @app.route("/register/", methods=["GET", "POST"])
 def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        email = request.form['email']
         poids = request.form['poids']
         nom = request.form['nom']
         cotisation = request.form['cotisation']
@@ -87,9 +100,11 @@ def register():
             error_message = "Ce nom d'utilisateur est déjà utilisé"
             return render_template("register.html", error_message=error_message, user = user)
 
-        query = "INSERT INTO User (username, password, email, poids, nom, cotisation, telephone) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        query = "INSERT INTO User (username, password) VALUES (%s, %s)"
+        query2 = "INSERT INTO Adherent (poids, nom, cotisation, telephone) VALUES (%s, %s, %s, %s)"
         cursor = mysql.connection.cursor()
-        cursor.execute(query, (username, password, email, poids, nom, cotisation, telephone))
+        cursor.execute(query, (username, password))
+        cursor.execute(query2, (poids, nom, cotisation, telephone))
         mysql.connection.commit()
         cursor.close()
         return render_template("register.html", user = user)

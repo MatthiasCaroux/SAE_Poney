@@ -1,0 +1,19 @@
+{%extends "base.html"%}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static' , filename = 'compte.css')}}">
+{% endblock %}
+{% block content %}
+<h1>Mon Compte</h1>
+<div class="rectangle">
+    <h2>Informations personnelles</h2>
+    {{user}}
+    <p>Nom d'utilisateur : {{user[0]}}</p>
+    <p>Mot de passe : {{user[1]}}</p>
+    <p>Nom: {{user[5]}}</p>
+    <p>Poids : {{ user[4] }}</p>
+    <p>Cotisation: {{user[6]}}</p>
+    <p>Téléphone: {{user[7]}}</p>
+    <a href="{{ url_for('logout') }}" class="bouton">Se déconnecter</a>
+</div>
+{% endblock %}
