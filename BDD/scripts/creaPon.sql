@@ -83,7 +83,7 @@ CREATE TABLE `User` (
 
 -- Permet de verifier que l'on peut faire une reservation
 
-DELIMITER $$
+DELIMITER |
 
 CREATE TRIGGER `before_insert_reserver`
 BEFORE INSERT ON `Reserver`
@@ -191,6 +191,8 @@ DELIMITER ;
 
 DELIMITER |
 
+DELIMITER |
+
 CREATE TRIGGER Poney_repose
 BEFORE INSERT ON Reserver
 FOR EACH ROW
@@ -199,19 +201,23 @@ BEGIN
 
     SELECT COUNT(*)
     INTO conflict_count
-    FROM Reserver
-    WHERE idPoney = NEW.idPoney
-    AND DateJour = NEW.DateJour
-    AND TIMESTAMPADD(HOUR, Duree, Heure) <= TIMESTAMPADD(HOUR, -1, NEW.Heure);
+    FROM Reserver r
+    JOIN CoursRealise cr ON r.idCoursRealise = cr.idCoursRealise
+    WHERE r.idPoney = NEW.idPoney
+    AND cr.DateJour = (SELECT DateJour FROM CoursRealise WHERE idCoursRealise = NEW.idCoursRealise)
+    AND (
+        TIMESTAMPADD(HOUR, 1, cr.Heure) > (SELECT Heure FROM CoursRealise WHERE idCoursRealise = NEW.idCoursRealise)
+        OR TIMESTAMPADD(HOUR, -1, cr.Heure) < (SELECT Heure FROM CoursRealise WHERE idCoursRealise = NEW.idCoursRealise)
+    );
 
     IF conflict_count > 0 THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Le poney est déjà réservé dans l\'heure précédente ou suivante.';
     END IF;
 END |
+
 DELIMITER ;
 
-DELIMITER |
 
 DELIMITER |
 
@@ -232,3 +238,4 @@ BEGIN
 END |
 
 DELIMITER ;
+
