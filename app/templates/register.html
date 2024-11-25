@@ -11,22 +11,26 @@
         {% if error_message %}
         <p class="error"><strong>Erreur:</strong> {{ error_message }}</p>
         {% endif %}
-        <div class="inline">
+        <div class="inline d-flex">
+            <img class="illustration" src="{{ url_for('static' , filename = 'images/avatar.png')}}" alt="">
             <input type="text" name="username" id="username" class="form-control form-control-lg" placeholder="Nom d'utilisateur">
         </div>
-        <div class="inline">
+        <div class="inline d-flex">
+            <img class="illustration" src="{{ url_for('static' , filename = 'images/cle.png')}}" alt="">
             <input type="password" name="password" id="password" class="form-control form-control-lg" placeholder="Mot de passe">
         </div>
-        <div class="inline">
+        <div class="inline d-flex">
+            <img class="illustration" src="{{ url_for('static' , filename = 'images/althere.png')}}" alt="">
             <input type="text" name="poids" id="poids" class="form-control form-control-lg" placeholder="Poids">
         </div>
-        <div class="inline">
-            <input type="text" name="nom" id="nom" class="form-control form-control-lg" placeholder="Nom">
+        <div class="inline d-flex">
+            <input type="text" name="Nom" id="nom" class="form-control form-control-lg" placeholder="Nom">
         </div>
-        <div class="inline">
+        <div class="inline d-flex">
+            <img class="illustration" src="{{ url_for('static' , filename = 'images/euro.png')}}" alt="">
             <input type="text" name="cotisation" id="cotisation" class="form-control form-control-lg" placeholder="Cotisation">
         </div>
-        <div class="inline">
+        <div class="inline d-flex">
             <input type="text" name="telephone" id="telephone" class="form-control form-control-lg" placeholder="Téléphone">
         </div>
         <button class ="bouton" type="submit">S'inscrire</button>

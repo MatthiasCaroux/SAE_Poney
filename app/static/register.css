@@ -47,3 +47,15 @@ button{
     height: 50px;
     border: 1px solid #000;
 }
+input{
+    border-top-left-radius: 0%;
+    border-bottom-left-radius: 0%;
+}
+
+.illustration{
+    height: 50px;
+    background-color: gray;
+    border-top-left-radius: 5%;
+    border-bottom-left-radius: 5%;
+
+}
