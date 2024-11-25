@@ -5,7 +5,11 @@ CREATE TABLE `Moniteur` (
     `nom` VARCHAR(50),
     PRIMARY KEY(`idMoniteur`)
 );
-
+CREATE TABLE `User` (
+    Username VARCHAR(50),
+    password VARCHAR(50),
+    PRIMARY KEY(Username)
+);
 -- Création de la table Poney
 CREATE TABLE `Poney` (
     `idPoney` INTEGER AUTO_INCREMENT,
@@ -79,7 +83,7 @@ CREATE TABLE `User` (
 
 -- Permet de verifier que l'on peut faire une reservation
 
-DELIMITER $$
+DELIMITER |
 
 CREATE TRIGGER `before_insert_reserver`
 BEFORE INSERT ON `Reserver`
@@ -89,26 +93,21 @@ BEGIN
     DECLARE poney_charge_max DECIMAL(5,2);
     DECLARE cotisation_valide BOOLEAN;
 
-    -- Récupération du poids de l'adhérent
     SELECT poids, cotisation INTO adherent_poids, cotisation_valide FROM Adherent WHERE idAdherent = NEW.idAdherent;
 
-    -- Vérification de la cotisation
     IF cotisation_valide = FALSE THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "La cotisation de l'adhérent n'est pas à jour.";
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La cotisation de l\'adhérent n\'est pas à jour.';
     END IF;
 
-    -- Récupération de la charge maximale du poney
     SELECT charge_max INTO poney_charge_max FROM Poney WHERE idPoney = NEW.idPoney;
 
-    -- Vérification du poids de l'adhérent par rapport à la charge maximale du poney
     IF adherent_poids > poney_charge_max THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "Le poids de l'adhérent dépasse la charge maximale du poney.";
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Le poids de l\'adhérent dépasse la charge maximale du poney.';
     END IF;
 
-END$$
+END |
 
 DELIMITER ;
-
 
 DELIMITER |
 
@@ -148,29 +147,32 @@ END|
 
 DELIMITER ;
 
--- Trigger pour vérifier qu'un cours n'est pas réservé par trop de personnes
 DELIMITER |
+
 CREATE TRIGGER cours_plein
 BEFORE INSERT ON Reserver
 FOR EACH ROW
 BEGIN
-    DECLARE nbPersonneTotale INTEGER;
     DECLARE nbPersonneInscrite INTEGER;
-    SELECT COUNT(idAdherent),NbPersonne INTO nbPersonneInscrite, nbPersonneTotale
+    DECLARE nbPersonneTotale INTEGER;
+    SELECT COUNT(idAdherent) INTO nbPersonneInscrite
     FROM Reserver NATURAL join CoursRealise
     WHERE idCoursRealise = NEW.idCoursRealise;
+    
+    SELECT NbPersonne INTO nbPersonneTotale
+    FROM CoursProgramme
+    WHERE idCours = NEW.idCoursRealise;
 
-    IF nbPersonneInscrite > nbPersonneTotale THEN
+    IF nbPersonneInscrite >= nbPersonneTotale THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = "Le nombre d'adhérents inscrits est supérieur au nombre total de places disponibles.";
+        SET MESSAGE_TEXT = 'Le nombre d''adhérents inscrits est supérieur ou égal au nombre total de places disponibles.';
     END IF;
-END
-|
+END |
 
 DELIMITER ;
 
--- Trigger pour vérifier qu'un poney n'est pas trop lourd pour un adhérent
 DELIMITER |
+
 CREATE TRIGGER Poids_Trop_Lourd
 BEFORE INSERT ON Reserver
 FOR EACH ROW
@@ -182,14 +184,15 @@ BEGIN
 
     IF poidsAdherent > chargeMaxPoney THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = "Le poids de l'adhérent dépasse la charge maximale du poney.";
+        SET MESSAGE_TEXT = 'Le poids de l''adhérent dépasse la charge maximale du poney.';
     END IF;
 END |
-delimiter ;
+DELIMITER ;
 
-/*
--- Trigger pour vérifier qu'un poney n'est pas en état de repos
 DELIMITER |
+
+DELIMITER |
+
 CREATE TRIGGER Poney_repose
 BEFORE INSERT ON Reserver
 FOR EACH ROW
@@ -198,35 +201,41 @@ BEGIN
 
     SELECT COUNT(*)
     INTO conflict_count
-    FROM Reserver
-    WHERE idPoney = NEW.idPoney
-    AND DateJour = NEW.DateJour
-    AND TIMESTAMPADD(HOUR, Duree, Heure) <= TIMESTAMPADD(HOUR, -1, NEW.Heure);
+    FROM Reserver r
+    JOIN CoursRealise cr ON r.idCoursRealise = cr.idCoursRealise
+    WHERE r.idPoney = NEW.idPoney
+    AND cr.DateJour = (SELECT DateJour FROM CoursRealise WHERE idCoursRealise = NEW.idCoursRealise)
+    AND (
+        TIMESTAMPADD(HOUR, 1, cr.Heure) > (SELECT Heure FROM CoursRealise WHERE idCoursRealise = NEW.idCoursRealise)
+        OR TIMESTAMPADD(HOUR, -1, cr.Heure) < (SELECT Heure FROM CoursRealise WHERE idCoursRealise = NEW.idCoursRealise)
+    );
 
-    -- Si on trouve un conflit, on lève une erreur
     IF conflict_count > 0 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = "Le poney est déjà réservé dans l'heure précédente ou suivante.";
+        SET MESSAGE_TEXT = 'Le poney est déjà réservé dans l\'heure précédente ou suivante.';
     END IF;
-END;
-|
-DELIMITER ;
-*/
+END |
 
--- Trigger pour vérifier qu'un adhérent à payer sa cotisation lors d'une réservation
+DELIMITER ;
+
+
 DELIMITER |
+
 CREATE TRIGGER Cotisation_Pas_Payer
 BEFORE INSERT ON Reserver
 FOR EACH ROW
-DECLARE cotisation BOOLEAN;
 BEGIN
-SELECT cotisation INTO cotisation
-FROM Adherent
-WHERE idAdherent = NEW.idAdherent;
-IF cotisation = FALSE THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = "L'adhérent n'a pas payé sa cotisation.";
-END IF;
-END;
-|
+    DECLARE cotis BOOLEAN;
+
+    SELECT cotisation INTO cotis
+    FROM Adherent
+    WHERE idAdherent = NEW.idAdherent;
+
+    IF cotis = FALSE THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'L''adhérent n''a pas payé sa cotisation.';
+    END IF;
+END |
+
 DELIMITER ;
+
