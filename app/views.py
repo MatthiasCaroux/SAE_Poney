@@ -71,12 +71,13 @@ def logout():
 @login_required
 def profile():
     global userlog
+    print(current_user.username)
     cursor = mysql.connection.cursor()
-    query = "SELECT * FROM User  natural join Adherent WHERE username = %s and User.idConnexion = Adherent.idAdherent"
+    query = "SELECT * FROM User  natural join Adherent WHERE User.username = %s and User.idConnexion = Adherent.idAdherent"
     cursor.execute(query, (current_user.username,))
     user = cursor.fetchone()
     cursor.close()
-    print(current_user.username)
+    
     userlog = True
     return render_template("compte.html", user = user, userlog = userlog)
 
