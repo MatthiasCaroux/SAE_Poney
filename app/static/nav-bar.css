@@ -24,8 +24,10 @@
     flex: 1; /* Assure une largeur égale pour tous les boutons principaux */
     border-radius: 5px; /* Bordures arrondies */
     white-space: nowrap;
-
 }
+
+
+
 
 /* Boutons principaux */
 .navbar-nav .nav-link:not(.login):not(.signup) {

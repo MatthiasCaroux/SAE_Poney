@@ -1,6 +1,117 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+{% endblock %}
 
 {% block content %}
-    <h1>Home</h1>
-    <p>Welcome to the home page!</p>
+<div class="container-fluid p-0">
+  <section class="hero-section d-flex align-items-center justify-content-center text-center text-white position-relative">
+    <div class="overlay position-absolute w-100 h-100"></div>
+    <div class="hero-content container position-relative">
+      <h1 class="display-3 fw-bold mb-3">IUT'O TROT</h1>
+      <p class="lead mb-4">
+        Nous sommes un centre équestre situé en périphérie d'Orléans (à 10 min du centre), 
+        avec un terrain de 250 km² pour permettre un entraînement au trot !
+      </p>
+      <h2 class="h4 mb-4">Orléans 45000</h2>
+      <a href="#" class="btn btn-light btn-lg">Réservez Votre Cours dès Maintenant !</a>
+    </div>
+  </section>
+</div>
+<!-- Section À propos de nous, version carrousel -->
+<section class="py-5 bg-white">
+    <div class="container">
+      <h2 class="text-center mb-4">À propos de nous</h2>
+      <div id="aboutCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+  
+          <!-- Slide 1 -->
+          <div class="carousel-item active">
+            <div class="row justify-content-center">
+              <div class="col-10 col-md-6 text-center">
+                <img src="{{ url_for('static', filename='images/image1.jpg') }}" class="img-fluid rounded mb-3" alt="Parcours équestre">
+                <p class="text-muted">Notre centre est équipé d'un parcours équestre pour vous entraîner tout au long de l'année.</p>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Slide 2 -->
+          <div class="carousel-item">
+            <div class="row justify-content-center">
+              <div class="col-10 col-md-6 text-center">
+                <img src="{{ url_for('static', filename='images/image2.jpg') }}" class="img-fluid rounded mb-3" alt="S'occuper des poneys">
+                <p class="text-muted">Vous pourrez, tout au long de votre carrière, vous occuper vous-même des poneys (les brosser, les nourrir...).</p>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Slide 3 -->
+          <div class="carousel-item">
+            <div class="row justify-content-center">
+              <div class="col-10 col-md-6 text-center">
+                <img src="{{ url_for('static', filename='images/image3.jpg') }}" class="img-fluid rounded mb-3" alt="Autre activité">
+                <p class="text-muted">Ici, décrivez une autre activité, installation ou avantage que votre centre offre.</p>
+              </div>
+            </div>
+          </div>
+  
+        </div>
+  
+        <!-- Contrôles précédent/suivant -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#aboutCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Précédent</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#aboutCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Suivant</span>
+        </button>
+  
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5 bg-white">
+    <div class="container">
+      <h2 class="text-center mb-4">Notre Équipe</h2>
+      <div class="text-center mb-5">
+        <p class="mb-1 fw-bold">La team du centre équestre</p>
+        <p class="text-muted">Nos moniteurs sont là pour vous accompagner sur les parcours ainsi qu'avec vos poneys</p>
+      </div>
+  
+      <!-- Première ligne de moniteurs -->
+      <div class="row g-4 justify-content-center">
+        <!-- Moniteur 1 -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm text-center p-3">
+            <!-- Vous pouvez ajouter une image du moniteur ici -->
+            <img src="{{ url_for('static', filename='images/moniteur1.jpg') }}" alt="Henry" class="rounded-circle mb-3" width="80" height="80">
+            <h3 class="h5 mb-2">Moniteur 1</h3>
+            <p class="fw-bold mb-1">Henry</p>
+            <p class="text-muted">38 ans</p>
+          </div>
+        </div>
+  
+        <!-- Moniteur 2 -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm text-center p-3">
+            <img src="{{ url_for('static', filename='images/moniteur2.jpg') }}" alt="Vanessa" class="rounded-circle mb-3" width="80" height="80">
+            <h3 class="h5 mb-2">Moniteur 2</h3>
+            <p class="fw-bold mb-1">Vanessa</p>
+            <p class="text-muted">52 ans (Reconversion)</p>
+          </div>
+        </div>
+  
+        <!-- Moniteur 3 -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm text-center p-3">
+            <img src="{{ url_for('static', filename='images/moniteur3.jpg') }}" alt="Moniteur 3" class="rounded-circle mb-3" width="80" height="80">
+            <h3 class="h5 mb-2">Moniteur 3</h3>
+            <p class="fw-bold mb-1">Titre</p>
+            <p class="text-muted">Description</p>
+          </div>
+        </div>
+      </div>
 {% endblock %}
