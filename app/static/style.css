@@ -2,7 +2,21 @@
     background-color: #001f3f;
 
 }
-ul{
 
 
+/* pour le footer */
+ul {
+    background-color: #001f3f;
+    align-items: center;
+}
+
+ul li {
+    display: inline;
+    padding: 10px;
+    color: white;
+}
+
+ul li a {
+    color: white;
+    text-decoration: none;
 }
