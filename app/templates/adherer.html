@@ -1,7 +1,38 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+{% endblock %}
+
 {% block content %}
+<section class="py-5 text-center">
+  <div class="container">
+    <h1 class="display-3 fw-bold mb-4">Adhérer à notre centre</h1>
+    <div class="mb-5">
+      <p class="fw-bold mb-1">Nos Tarifs :</p>
+      <p class="text-muted mb-0">Les Tarifs sont TTC</p>
+    </div>
+    
+    <div class="row justify-content-center g-4">
+      <!-- Adhésion mensuelle -->
+      <div class="col-md-3">
+        <div class="card h-100 border text-center p-4">
+          <h3 class="h6 mb-3">L'adhésion mensuelle</h3>
+          <p class="display-6 fw-bold">39,99€ / mois</p>
+          <a href="#" class="btn btn-light btn-block">S'abonner</a>
+        </div>
+      </div>
 
-<h1>Page pour adhérer au club</h1>
-
-
+      <!-- Adhésion annuelle -->
+      <div class="col-md-3">
+        <div class="card h-100 border text-center p-4">
+          <h3 class="h6 mb-3">L'adhésion annuelle</h3>
+          <p class="display-6 fw-bold">399,99€ / an</p>
+          <a href="#" class="btn btn-light btn-block">S'abonner</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}

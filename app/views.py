@@ -50,7 +50,7 @@ def login():
         if user and user[1] == password:
             login_user(User(username=user[0]))
             userlog = True
-            return render_template("home.html", user = user, userlog = userlog)
+            return redirect(url_for('home'))
         else:
             userlog = False
             error_message = "Nom d'utilisateur ou mot de passe incorrect"
@@ -65,7 +65,7 @@ def logout():
     logout_user()
     global userlog
     userlog = False
-    return render_template("home.html", userlog = userlog)
+    return redirect(url_for('home'))
 
 @app.route("/profile/")
 @login_required

@@ -1,0 +1,20 @@
+.planning-table {
+    table-layout: fixed;
+    width: 100%;
+  }
+  .planning-table th,
+  .planning-table td {
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    word-wrap: break-word;
+  }
+  .planning-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+  }
+  .task-cell {
+    background: #fff7d1;
+  }
