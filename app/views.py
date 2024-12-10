@@ -113,4 +113,19 @@ def register():
 
 @app.route("/poney")
 def poney():
-    return render_template("poney.html", poney=get_poney()[:10])
+    return render_template("poney.html")#ajouter les poneys
+
+
+@app.route("/reservation")
+def reservation():
+    return render_template("reservation.html")
+
+
+@app.route("/planning")
+def planning():
+    return render_template("planning.html")
+
+
+@app.route("/adherer")
+def adherer():
+    return render_template("adherer.html")
