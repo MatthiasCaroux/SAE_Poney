@@ -50,7 +50,7 @@ def login():
         if user and user[1] == password:
             login_user(User(username=user[0]))
             userlog = True
-            return render_template("home.html", user = user, userlog = userlog)
+            return redirect(url_for('home'))
         else:
             userlog = False
             error_message = "Nom d'utilisateur ou mot de passe incorrect"
@@ -65,7 +65,7 @@ def logout():
     logout_user()
     global userlog
     userlog = False
-    return render_template("home.html", userlog = userlog)
+    return redirect(url_for('home'))
 
 @app.route("/profile/")
 @login_required
@@ -113,4 +113,19 @@ def register():
 
 @app.route("/poney")
 def poney():
-    return render_template("poney.html", poney=get_poney()[:10])
+    return render_template("poney.html")#ajouter les poneys
+
+
+@app.route("/reservation")
+def reservation():
+    return render_template("reservation.html")
+
+
+@app.route("/planning")
+def planning():
+    return render_template("planning.html")
+
+
+@app.route("/adherer")
+def adherer():
+    return render_template("adherer.html")
