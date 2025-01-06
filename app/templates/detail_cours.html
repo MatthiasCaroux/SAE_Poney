@@ -1,0 +1,42 @@
+{% extends "base.html"%}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='detail_cours.css') }}">
+{% endblock %}
+{% block content %}
+<div class="cours-details-container">
+    <h1>Détail du cours</h1>
+    <div class="cours-details">
+        <div class="detail-item">
+            <h3>Durée</h3>
+            <p>{{ cours.duree }} heures</p>
+        </div>
+        <div class="detail-item">
+            <h3>Date</h3>
+            <p>{{ cours.date }}</p>
+        </div>
+        <div class="detail-item">
+            <h3>Semaine</h3>
+            <p>{{ cours.semaine }}</p>
+        </div>
+        <div class="detail-item">
+            <h3>Heure</h3>
+            <p>{{ cours.heure }}</p>
+        </div>
+        <div class="detail-item">
+            <h3>Prix</h3>
+            <p>{{ cours.prix }} €</p>
+        </div>
+        <div class="detail-item">
+            <h3>Niveau</h3>
+            <p>{{ cours.niveau }}</p>
+        </div>
+        <div class="detail-item">
+            <h3>Nombre de personnes</h3>
+            <p>{{ cours.nbpersonnes }}</p>
+        </div>
+    </div>
+    <a href="{{ url_for('home') }}" class="btn">Retour à la liste des cours</a>
+</div>
+{% endblock %}
+

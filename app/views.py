@@ -129,3 +129,7 @@ def planning():
 @app.route("/adherer")
 def adherer():
     return render_template("adherer.html")
+@app.route("/detail_cours/<id>")
+def detail_cours(id):
+    cours = get_cours_programme_by_id(id)
+    return render_template("detail_cours.html", cours=cours)
