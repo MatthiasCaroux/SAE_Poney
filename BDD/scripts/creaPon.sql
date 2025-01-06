@@ -6,10 +6,13 @@ CREATE TABLE `Moniteur` (
     PRIMARY KEY(`idMoniteur`)
 );
 CREATE TABLE `User` (
-    Username VARCHAR(50),
-    password VARCHAR(50),
-    PRIMARY KEY(Username)
+    `Username` VARCHAR(50),
+    `password` VARCHAR(50),
+    `idConnexion` INTEGER,
+    PRIMARY KEY(`Username`),
+    FOREIGN KEY(`idConnexion`) REFERENCES `Adherent`(`idAdherent`)
 );
+
 -- Création de la table Poney
 CREATE TABLE `Poney` (
     `idPoney` INTEGER AUTO_INCREMENT,
