@@ -1,4 +1,5 @@
 # from app import app
+from datetime import datetime
 from flask import render_template, request
 from app.models import *
 from app import mysql, login_manager
@@ -118,12 +119,18 @@ def poney():
 
 @app.route("/reservation")
 def reservation():
-    return render_template("reservation.html")
+
+    return render_template("reservation.html", )
 
 
 @app.route("/planning")
 def planning():
-    return render_template("planning.html")
+    current_week = datetime.now().isocalendar()[1]
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT *, DAYNAME(DateJour) AS Jour FROM CoursProgramme WHERE Semaine = %s", (current_week,))
+    cours = cursor.fetchall()
+    cursor.close()
+    return render_template("planning.html", cours=cours)
 
 
 @app.route("/adherer")

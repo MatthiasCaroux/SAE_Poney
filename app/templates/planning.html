@@ -2,7 +2,7 @@
 
 {% block head %}
 {{ super() }}
-<link rel="stylesheet" href="{{ url_for('static' , filename = 'planning.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='planning.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -12,168 +12,42 @@
     <p class="text-center mb-5 text-muted">
       Retrouvez ci-dessous l'organisation de la semaine, avec les cours et activités proposés chaque jour.
     </p>
-
-    <div class="table-responsive">
-      <table class="planning-table">
-        <thead>
-          <tr>
-            <th style="width: 5%;">Heure</th>
-            <th>Lundi</th>
-            <th>Mardi</th>
-            <th>Mercredi</th>
-            <th>Jeudi</th>
-            <th>Vendredi</th>
-            <th>Samedi</th>
-            <th>Dimanche</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Ligne 6h -->
-          <tr>
-            <td>6h</td>
-            <td class="task-cell">Cours de trot débutants</td>
-            <td></td>
-            <td class="task-cell">Analyse des performances précédentes</td>
-            <td></td>
-            <td class="task-cell">Révisions techniques saut d’obstacles</td>
-            <td></td>
-            <td></td>
-          </tr>
-          <!-- Ligne 7h -->
-          <tr>
-            <td>7h</td>
-            <td class="task-cell">Préparation des poneys</td>
-            <td class="task-cell">Cours de dressage</td>
-            <td></td>
-            <td></td>
-            <td class="task-cell">Session de pansage</td>
-            <td></td>
-            <td></td>
-          </tr>
-          <!-- Ligne 8h -->
-          <tr>
-            <td>8h</td>
-            <td></td>
-            <td class="task-cell">Cours intermédiaire Trot & Galop</td>
-            <td class="task-cell">Balade en extérieur</td>
-            <td></td>
-            <td></td>
-            <td class="task-cell">Cours enfants</td>
-            <td></td>
-          </tr>
-          <!-- Ligne 9h -->
-          <tr>
-            <td>9h</td>
-            <td class="task-cell">Cours débutants (Piste 1)</td>
-            <td></td>
-            <td></td>
-            <td class="task-cell">Dressage avancé</td>
-            <td class="task-cell">Préparation concours internes</td>
-            <td></td>
-            <td></td>
-          </tr>
-          <!-- Ligne 10h -->
-          <tr>
-            <td>10h</td>
-            <td></td>
-            <td class="task-cell">Trot technique</td>
-            <td></td>
-            <td></td>
-            <td class="task-cell">Saut d’obstacles intermédiaire</td>
-            <td></td>
-            <td></td>
-          </tr>
-          <!-- Ligne 11h -->
-          <tr>
-            <td>11h</td>
-            <td class="task-cell"></td>
-            <td></td>
-            <td class="task-cell"></td>
-            <td></td>
-            <td></td>
-            <td class="task-cell"></td>
-            <td></td>
-          </tr>
-          <!-- Ligne 12h -->
-          <tr>
-            <td>12h</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <!-- Ligne 13h -->
-          <tr>
-            <td>13h</td>
-            <td class="task-cell"></td>
-            <td></td>
-            <td class="task-cell"></td>
-            <td></td>
-            <td></td>
-            <td class="task-cell"></td>
-            <td></td>
-          </tr>
-          <!-- Ligne 14h -->
-          <tr>
-            <td>14h</td>
-            <td class="task-cell"></td>
-            <td></td>
-            <td></td>
-            <td class="task-cell"></td>
-            <td class="task-cell"></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <!-- Ligne 15h -->
-          <tr>
-            <td>15h</td>
-            <td></td>
-            <td class="task-cell"></td>
-            <td></td>
-            <td></td>
-            <td class="task-cell"></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <!-- Ligne 16h -->
-          <tr>
-            <td>16h</td>
-            <td class="task-cell"></td>
-            <td></td>
-            <td class="task-cell"></td>
-            <td></td>
-            <td></td>
-            <td class="task-cell"></td>
-            <td></td>
-          </tr>
-          <!-- Ligne 17h -->
-          <tr>
-            <td>17h</td>
-            <td></td>
-            <td class="task-cell"></td>
-            <td></td>
-            <td class="task-cell"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <!-- Ligne 18h -->
-          <tr>
-            <td>18h</td>
-            <td class="task-cell"></td>
-            <td></td>
-            <td></td>
-            <td class="task-cell"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <table class="planning-table">
+      <thead>
+        <tr>
+          <th style="width: 10%;">Heure</th>
+          <th>Lundi</th>
+          <th>Mardi</th>
+          <th>Mercredi</th>
+          <th>Jeudi</th>
+          <th>Vendredi</th>
+          <th>Samedi</th>
+          <th>Dimanche</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for heure in range(8, 20) %}
+        <tr>
+          <td>{{ heure }}:00</td>
+          {% for jour in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+          <td>
+            {% for cours in cours %}
+              {% set cours_heure = cours[4].seconds // 3600 %}
+              {% if cours_heure == heure %}
+                {% if cours[8] == jour %}
+                  <div>
+                    <strong>{{ cours[6] }}</strong><br>
+                    Durée : {{ cours[3] }}h<br>
+                  </div>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </section>
 {% endblock %}
