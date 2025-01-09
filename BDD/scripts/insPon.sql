@@ -49,5 +49,5 @@ INSERT INTO `Anime` (`idMoniteur`, `idCours`) VALUES
 (3, 3);
 
 
-INSERT INTO `User` (`Username`, `password`) VALUES
-('admin', 'admin'); 
+INSERT INTO User (Username, password, idConnexion)
+VALUES ('admin', 'admin', 1);

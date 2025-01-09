@@ -6,35 +6,38 @@
 {% block content %}
 <h1>S'inscrire</h1>
 <div class="rectangle">
-    <form action="/register/" role="form" method ="POST" action ="{{ url_for ('register') }}">
+    <form action="/register/" method="POST" role="form">
         <h2>Inscription à IUT’O TROT</h2>
+    
         {% if error_message %}
         <p class="error"><strong>Erreur:</strong> {{ error_message }}</p>
         {% endif %}
+    
         <div class="inline d-flex">
-            <img class="illustration" src="{{ url_for('static' , filename = 'images/avatar.png')}}" alt="">
-            <input type="text" name="username" id="username" class="form-control form-control-lg" placeholder="Nom d'utilisateur">
+            <img class="illustration" src="{{ url_for('static', filename='images/avatar.png') }}" alt="">
+            <input type="text" name="username" id="username" class="form-control form-control-lg" placeholder="Nom d'utilisateur" required>
         </div>
         <div class="inline d-flex">
-            <img class="illustration" src="{{ url_for('static' , filename = 'images/cle.png')}}" alt="">
-            <input type="password" name="password" id="password" class="form-control form-control-lg" placeholder="Mot de passe">
+            <img class="illustration" src="{{ url_for('static', filename='images/cle.png') }}" alt="">
+            <input type="password" name="password" id="password" class="form-control form-control-lg" placeholder="Mot de passe" required>
         </div>
         <div class="inline d-flex">
-            <img class="illustration" src="{{ url_for('static' , filename = 'images/althere.png')}}" alt="">
-            <input type="text" name="poids" id="poids" class="form-control form-control-lg" placeholder="Poids">
+            <img class="illustration" src="{{ url_for('static', filename='images/althere.png') }}" alt="">
+            <input type="number" name="poids" id="poids" class="form-control form-control-lg" placeholder="Poids" required>
         </div>
         <div class="inline d-flex">
-            <input type="text" name="nom" id="nom" class="form-control form-control-lg" placeholder="Nom">
+            <input type="text" name="nom" id="nom" class="form-control form-control-lg" placeholder="Nom" required>
         </div>
         <div class="inline d-flex">
-            <img class="illustration" src="{{ url_for('static' , filename = 'images/euro.png')}}" alt="">
-            <input type="text" name="cotisation" id="cotisation" class="form-control form-control-lg" placeholder="Cotisation">
+            <img class="illustration" src="{{ url_for('static', filename='images/euro.png') }}" alt="">
+            <input type="checkbox" name="cotisation" id="cotisation" value="1">
+            <label for="cotisation">Cotisation à jour</label>
         </div>
         <div class="inline d-flex">
-            <input type="text" name="telephone" id="telephone" class="form-control form-control-lg" placeholder="Téléphone">
+            <input type="tel" name="telephone" id="telephone" class="form-control form-control-lg" placeholder="Téléphone (10 chiffres)" pattern="[0-9]{10}" required>
         </div>
-        <button class ="bouton" type="submit">S'inscrire</button>
-
+        <button class="bouton" type="submit">S'inscrire</button>
     </form>
+    
 </div>
 {% endblock %}
