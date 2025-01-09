@@ -56,3 +56,35 @@ def get_cours_programme_by_id(id):
     cours_programme = cursor.fetchone()
     cursor.close()
     return CoursProgramme(cours_programme[0], cours_programme[1], cours_programme[2], cours_programme[3], cours_programme[4], cours_programme[5], cours_programme[6], cours_programme[7])
+
+class Poney:
+    def __init__(self, idPoney, nomPoney, charge_max):
+        self.idPoney = idPoney
+        self.nomPoney = nomPoney
+        self.charge_max = charge_max
+        self.reservations = []
+
+    def __repr__(self):
+        return f"Poney(idPoney={self.idPoney}, nomPoney={self.nomPoney}, charge_max={self.charge_max})"
+
+def get_poney():
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM Poney")
+    poney = cursor.fetchall()
+    cursor.close()
+    res = []
+    for p in poney:
+        res.append(Poney(p[0], p[1], p[2]))
+    return res
+
+def get_poney_dispo(id_cours):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM Poney WHERE idPoney NOT IN (SELECT idPoney FROM Reserver WHERE idCoursRealise = %s)", (id_cours,))
+    poney = cursor.fetchall()
+    cursor.close()
+    res = []
+    for p in poney:
+        res.append(Poney(p[0], p[1], p[2]))
+    return res
+
+    

@@ -1,26 +1,22 @@
 {% extends 'base.html' %}
 
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='reservation.css') }}">
+{% endblock %}
+
 {% block content %}
-<!-- <div id="calendar"></div> -->
-<!--  -->
+  <h1>Choisissez un poney pour la réservation</h1>
 
-<h1>Page de reservation</h1>
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            plugins: ['dayGrid'], // Charge le plugin dayGrid
-            initialView: 'dayGridMonth', // Vue par défaut : mois
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            events: '/api/events'
-        });
-        calendar.render();
-    });
-</script> -->
-
+  <form action="{{ url_for('insert_reserver', id=id) }}" method="POST">
+    <label for="poney">Sélectionnez un poney :</label>
+    <select name="poney" id="poney" required>
+        <option value="" selected disabled>-- Sélectionnez un poney --</option>
+        {% for poney in listeponey %}
+            <option value="{{ poney.idPoney }}">{{ poney.nomPoney }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Réserver ce Poney</button>
+</form>
 
 {% endblock %}
