@@ -56,3 +56,50 @@ def get_cours_programme_by_id(id):
     cours_programme = cursor.fetchone()
     cursor.close()
     return CoursProgramme(cours_programme[0], cours_programme[1], cours_programme[2], cours_programme[3], cours_programme[4], cours_programme[5], cours_programme[6], cours_programme[7])
+
+
+def get_moniteurs():
+    cursor = mysql.connection.cursor()
+    query = """
+        SELECT 
+    Moniteur.idMoniteur, 
+    Moniteur.nom, 
+    Moniteur.prenom, 
+    COUNT(Anime.idCours) AS NombreCoursRealises, 
+    COALESCE(SUM(CoursProgramme.Duree), 0) AS TotalHeuresPrevues
+    FROM Moniteur
+    LEFT JOIN Anime ON Moniteur.idMoniteur = Anime.idMoniteur
+    LEFT JOIN CoursRealise ON Anime.idCours = CoursRealise.idCoursRealise
+    LEFT JOIN CoursProgramme ON CoursRealise.idCours = CoursProgramme.idCours
+    GROUP BY Moniteur.idMoniteur, Moniteur.nom, Moniteur.prenom
+
+    UNION
+
+    SELECT 
+        Moniteur.idMoniteur, 
+        Moniteur.nom, 
+        Moniteur.prenom, 
+        0 AS NombreCoursRealises, 
+        0 AS TotalHeuresPrevues
+    FROM Moniteur
+    WHERE Moniteur.idMoniteur NOT IN (
+        SELECT DISTINCT idMoniteur FROM Anime
+    )
+    ORDER BY idMoniteur;
+
+    """
+    cursor.execute(query)
+    moniteurs = cursor.fetchall()
+    cursor.close()
+    return moniteurs
+
+
+
+
+def get_utilisateurs():
+    cursor = mysql.connection.cursor()
+    # Récupérer uniquement les utilisateurs avec un idConnexion valide
+    cursor.execute("SELECT idConnexion, prenom, nom, role FROM User WHERE idConnexion IS NOT NULL")
+    utilisateurs = cursor.fetchall()
+    cursor.close()
+    return utilisateurs

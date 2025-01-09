@@ -38,6 +38,7 @@
                   <div>
                     <strong>{{ cours[6] }}</strong><br>
                     Durée : {{ cours[3] }}h<br>
+                    <a href="{{ url_for('detail_cours', id=cours[0] + 1) }}">Détails du cours</a>
                   </div>
                 {% endif %}
               {% endif %}

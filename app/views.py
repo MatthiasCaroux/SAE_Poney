@@ -53,7 +53,6 @@ def login():
         
     return render_template("login.html", user=None)
 
-
 @app.route("/logout/")
 @login_required
 def logout():
@@ -76,62 +75,46 @@ def profile():
     cursor.close()
     return render_template("compte.html", user=user)
 
-
 @app.route("/register/", methods=["GET", "POST"])
 def register():
-    if request.method == 'POST':
-        # Récupérer les données du formulaire
-        username = request.form.get('username')
-        password = request.form.get('password')
-        poids = request.form.get('poids')
-        nom = request.form.get('nom')
-        cotisation = request.form.get('cotisation') == '1'  # Checkbox
-        telephone = request.form.get('telephone')
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        nom = request.form.get("nom")
+        prenom = request.form.get("prenom")
+        telephone = request.form.get("telephone")
+        poids = request.form.get("poids")
+        cotisation = request.form.get("cotisation") == "1"
 
-        # Vérifications des données
-        if not username or not password or not nom or not poids or not telephone:
-            error_message = "Tous les champs sont obligatoires."
-            return render_template("register.html", error_message=error_message)
-
-        if len(telephone) != 10 or not telephone.isdigit():
-            error_message = "Le numéro de téléphone doit contenir 10 chiffres."
-            return render_template("register.html", error_message=error_message)
+        if not username or not password or not nom or not prenom or not telephone or not poids:
+            flash("Tous les champs sont obligatoires.", "danger")
+            return render_template("register.html")
 
         try:
-            # Vérifier si l'utilisateur existe déjà
             cursor = mysql.connection.cursor()
-            query_user_check = "SELECT Username FROM User WHERE Username = %s"
-            cursor.execute(query_user_check, (username,))
-            existing_user = cursor.fetchone()
-            if existing_user:
-                error_message = "Ce nom d'utilisateur est déjà utilisé."
-                return render_template("register.html", error_message=error_message)
 
-            # Insérer dans la table Adherent
+            # Créer un adhérent
             query_adherent = """
-                INSERT INTO Adherent (poids, nom, cotisation, Telephone)
-                VALUES (%s, %s, %s, %s)
+                INSERT INTO Adherent (nom, prenom, telephone, poids, cotisation)
+                VALUES (%s, %s, %s, %s, %s)
             """
-            cursor.execute(query_adherent, (poids, nom, cotisation, telephone))
-            id_adherent = cursor.lastrowid
+            cursor.execute(query_adherent, (nom, prenom, telephone, poids, cotisation))
 
-            # Insérer dans la table User en liant à l'adhérent
+            # Créer un utilisateur associé
             query_user = """
-                INSERT INTO User (Username, password, idConnexion)
-                VALUES (%s, %s, %s)
+                INSERT INTO User (username, password, nom, prenom, role)
+                VALUES (%s, %s, %s, %s, 'adherent')
             """
-            cursor.execute(query_user, (username, password, id_adherent))
+            cursor.execute(query_user, (username, password, nom, prenom))
 
-            # Commit de la transaction
             mysql.connection.commit()
             cursor.close()
 
-            flash("Inscription réussie. Vous pouvez vous connecter.", "success")
-            return redirect(url_for('login'))
+            flash("Inscription réussie ! Vous pouvez maintenant vous connecter.", "success")
+            return redirect(url_for("login"))
         except Exception as e:
             mysql.connection.rollback()
-            error_message = f"Une erreur s'est produite : {str(e)}"
-            return render_template("register.html", error_message=error_message)
+            flash(f"Erreur lors de l'inscription : {str(e)}", "danger")
 
     return render_template("register.html")
 
@@ -140,19 +123,33 @@ def register():
 def poney():
     return render_template("poney.html")
 
-
 @app.route("/reservation")
 def reservation():
     return render_template("reservation.html")
-
 
 @app.route("/planning")
 def planning():
     current_week = datetime.now().isocalendar()[1]
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT *, DAYNAME(DateJour) AS Jour FROM CoursProgramme WHERE Semaine = %s", (current_week,))
-    cours = cursor.fetchall()
+    cursor.execute("SELECT idCours, Duree, DateJour, Semaine, Heure, Prix, Niveau, NbPersonne, DAYNAME(DateJour) AS Jour FROM CoursProgramme WHERE Semaine = %s", (current_week,))
+    cours_raw = cursor.fetchall()
     cursor.close()
+
+    cours = [
+        {
+            "id": row[0],
+            "duree": row[1],
+            "date": row[2],
+            "semaine": row[3],
+            "heure": row[4],
+            "prix": row[5],
+            "niveau": row[6],
+            "nb_personne": row[7],
+            "jour": row[8],
+        }
+        for row in cours_raw
+    ]
+
     return render_template("planning.html", cours=cours)
 
 
@@ -165,12 +162,76 @@ def detail_cours(id):
     cours = get_cours_programme_by_id(id)
     return render_template("detail_cours.html", cours=cours)
 
-
 @app.route("/admin/")
 @login_required
 def admin():
     if current_user.username == 'admin':
-        return render_template("admin.html")
+        moniteurs = get_moniteurs()
+        utilisateurs = get_utilisateurs()
+        return render_template("admin.html", moniteurs=moniteurs, utilisateurs=utilisateurs)
     else:
         flash("Accès réservé à l'administrateur.", "danger")
         return redirect(url_for("home"))
+
+
+
+@app.route("/admin/create-moniteur", methods=["GET", "POST"])
+@login_required
+def create_moniteur():
+    # Vérification des droits administrateur
+    if current_user.username != "admin":
+        flash("Accès réservé à l'administrateur.", "danger")
+        return redirect(url_for("home"))
+
+    if request.method == "POST":
+        # Récupérer les données du formulaire
+        nom = request.form.get("nom")
+        prenom = request.form.get("prenom")
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        # Validation des données
+        if not nom or not prenom or not username or not password:
+            flash("Tous les champs sont obligatoires.", "danger")
+            return redirect(url_for("create_moniteur"))
+
+        try:
+            cursor = mysql.connection.cursor()
+
+            # Vérifier si le username existe déjà
+            query_user_check = "SELECT username FROM User WHERE username = %s"
+            cursor.execute(query_user_check, (username,))
+            existing_user = cursor.fetchone()
+
+            if existing_user:
+                flash("Ce nom d'utilisateur est déjà utilisé.", "danger")
+                return redirect(url_for("admin"))
+
+            # Créer un moniteur
+            query_moniteur = """
+                INSERT INTO Moniteur (nom, prenom)
+                VALUES (%s, %s)
+            """
+            cursor.execute(query_moniteur, (nom, prenom))
+            moniteur_id = cursor.lastrowid  # ID du moniteur inséré
+
+            # Créer un utilisateur avec le rôle moniteur
+            query_user = """
+                INSERT INTO User (username, password, nom, prenom, role)
+                VALUES (%s, %s, %s, %s, 'moniteur')
+            """
+            cursor.execute(query_user, (username, password, nom, prenom))
+
+            # Confirmer les changements
+            mysql.connection.commit()
+            cursor.close()
+
+            flash("Moniteur créé avec succès.", "success")
+            return redirect(url_for("admin"))
+        except Exception as e:
+            mysql.connection.rollback()
+            flash(f"Erreur lors de la création : {str(e)}", "danger")
+            return redirect(url_for("admin"))
+
+    return render_template("create_moniteur.html")
+

@@ -3,6 +3,69 @@
 {% block content %}
 <div class="container mt-5">
     <h1>Administration</h1>
-    <p>Cette partie permettra de faire de l'administration.</p>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="container mt-3">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+    <h2>Les moniteurs et leurs cours</h2>
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Nombre de cours réalisés</th>
+                <th>Total d'heures prévues</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for moniteur in moniteurs %}
+                <tr>
+                    <td>{{ moniteur[0] }}</td>
+                    <td>{{ moniteur[1] }}</td>
+                    <td>{{ moniteur[2] }}</td>
+                    <td>{{ moniteur[3] }}</td>
+                    <td>{{ moniteur[4] }} h</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">Aucun moniteur trouvé.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Les personnes du site et leurs rôles</h2>
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Rôle</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for utilisateur in utilisateurs %}
+                <tr>
+                    <td>{{ utilisateur[1] }}</td>
+                    <td>{{ utilisateur[2] }}</td>
+                    <td>{{ utilisateur[3] }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">Aucune personne trouvée.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('create_moniteur') }}" class="btn btn-success mt-3">Créer un Moniteur</a>
+    
 </div>
 {% endblock %}
