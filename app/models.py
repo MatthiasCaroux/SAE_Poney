@@ -77,9 +77,9 @@ def get_poney():
         res.append(Poney(p[0], p[1], p[2]))
     return res
 
-def get_poney_dispo(id_cours):
+def get_poney_dispo(id_cours,poids):
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM Poney WHERE idPoney NOT IN (SELECT idPoney FROM Reserver WHERE idCoursRealise = %s)", (id_cours,))
+    cursor.execute("SELECT * FROM Poney WHERE idPoney NOT IN (SELECT idPoney FROM Reserver WHERE idCoursRealise = %s or charge_max <%s )", (id_cours,poids,))
     poney = cursor.fetchall()
     cursor.close()
     res = []

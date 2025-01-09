@@ -148,7 +148,7 @@ def insert_reserver(id):
         adherent_id = None
         cursor = mysql.connection.cursor()
         query = """
-            SELECT Adherent.idAdherent
+            SELECT Adherent.idAdherent,Adherent.poids
             FROM User 
             NATURAL JOIN Adherent 
             WHERE User.username = %s AND User.idConnexion = Adherent.idAdherent
@@ -158,6 +158,7 @@ def insert_reserver(id):
         cursor.close()
         if result:
             adherent_id = result[0]
+            poids = result[1]
         else:
             return redirect(url_for('reservation', id=id))
 
