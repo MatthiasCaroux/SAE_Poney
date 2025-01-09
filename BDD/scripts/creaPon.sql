@@ -1,10 +1,10 @@
 -- Création de la table Moniteur
-CREATE TABLE `Moniteur` (
-    `idMoniteur` INTEGER AUTO_INCREMENT,
-    `Prenom` VARCHAR(50),
-    `nom` VARCHAR(50),
-    PRIMARY KEY(`idMoniteur`)
+CREATE TABLE Moniteur (
+    idMoniteur INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(50) NOT NULL,
+    prenom VARCHAR(50) NOT NULL
 );
+
 CREATE TABLE `User` (
     `Username` VARCHAR(50),
     `password` VARCHAR(50),
@@ -32,28 +32,28 @@ CREATE TABLE `Adherent` (
 );
 
 -- Création de la table CoursProgramme
-CREATE TABLE `CoursProgramme` (
-    `idCours` INTEGER AUTO_INCREMENT,
-    `Duree` INTEGER CHECK (`Duree` <= 2 ),
-    `DateJour` DATE,
-    `Semaine` INTEGER,
-    `Heure` TIME,
-    `Prix` DECIMAL(10,2),
-    `Niveau` VARCHAR(20),
-    `NbPersonne` INTEGER CHECK (`NbPersonne` <= 10),
-    PRIMARY KEY(`idCours`)
+CREATE TABLE CoursProgramme (
+    idCours INT AUTO_INCREMENT PRIMARY KEY,
+    Duree INT CHECK (Duree <= 2),
+    DateJour DATE NOT NULL,
+    Semaine INT NOT NULL,
+    Heure TIME NOT NULL,
+    Prix DECIMAL(10,2) NOT NULL,
+    Niveau VARCHAR(20) NOT NULL,
+    NbPersonne INT CHECK (NbPersonne <= 10)
 );
 
+
 -- Création de la table CoursRealise avec la clé étrangère vers CoursProgramme
-CREATE TABLE `CoursRealise` (
-    `idCoursRealise` INTEGER AUTO_INCREMENT,
-    `DateJour` DATE NOT NULL,
-    `Semaine` INTEGER,
-    `Mois` INTEGER,
-    `idCours` INTEGER,
-    PRIMARY KEY(`idCoursRealise`),
-    FOREIGN KEY(`idCours`) REFERENCES `CoursProgramme`(`idCours`) ON UPDATE NO ACTION ON DELETE NO ACTION
+CREATE TABLE CoursRealise (
+    idCoursRealise INT AUTO_INCREMENT PRIMARY KEY,
+    DateJour DATE NOT NULL,
+    Semaine INT NOT NULL,
+    Mois INT NOT NULL,
+    idCours INT NOT NULL,
+    FOREIGN KEY (idCours) REFERENCES CoursProgramme(idCours)
 );
+
 
 -- Création de la table Reserver avec les clés étrangères
 CREATE TABLE `Reserver` (
@@ -76,13 +76,15 @@ CREATE TABLE `Anime` (
     FOREIGN KEY(`idCours`) REFERENCES `CoursRealise`(`idCoursRealise`) ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-CREATE TABLE `User` (
-    `Username` VARCHAR(50),
-    `password` VARCHAR(50),
-    `idConnexion` INTEGER AUTO_INCREMENT,
-    PRIMARY KEY(`Username`),
-    FOREIGN KEY(`idConnexion`) REFERENCES `Adherent`(`idAdherent`)
+CREATE TABLE User (
+    idConnexion INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    nom VARCHAR(50) NOT NULL,
+    prenom VARCHAR(50) NOT NULL,
+    role ENUM('adherent', 'moniteur', 'admin') NOT NULL
 );
+
 
 -- Permet de verifier que l'on peut faire une reservation
 
