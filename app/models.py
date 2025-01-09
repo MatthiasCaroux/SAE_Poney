@@ -133,3 +133,34 @@ def get_utilisateurs():
     utilisateurs = cursor.fetchall()
     cursor.close()
     return utilisateurs
+
+
+class Poney:
+    def __init__(self, idPoney, nomPoney, charge_max):
+        self.idPoney = idPoney
+        self.nomPoney = nomPoney
+        self.charge_max = charge_max
+        self.reservations = []
+
+    def __repr__(self):
+        return f"Poney(idPoney={self.idPoney}, nomPoney={self.nomPoney}, charge_max={self.charge_max})"
+
+def get_poney():
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM Poney")
+    poney = cursor.fetchall()
+    cursor.close()
+    res = []
+    for p in poney:
+        res.append(Poney(p[0], p[1], p[2]))
+    return res
+
+def get_poney_dispo(id_cours,poids):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM Poney WHERE idPoney NOT IN (SELECT idPoney FROM Reserver WHERE idCoursRealise = %s or charge_max <%s )", (id_cours,poids,))
+    poney = cursor.fetchall()
+    cursor.close()
+    res = []
+    for p in poney:
+        res.append(Poney(p[0], p[1], p[2]))
+    return res

@@ -158,9 +158,11 @@ def register():
 def poney():
     return render_template("poney.html")
 
-@app.route("/reservation")
-def reservation():
-    return render_template("reservation.html")
+@app.route("/reservation/<id>")
+def reservation(id):
+    cours = get_cours_programme_by_id(id)
+    listeponey = get_poney_dispo(id)
+    return render_template("reservation.html", cours=cours, listeponey=listeponey, id = id)
 
 @app.route("/planning")
 def planning():
@@ -220,6 +222,50 @@ def admin():
     else:
         flash("Accès réservé à l'administrateur.", "danger")
         return redirect(url_for("home"))
+    
+
+@app.route("/insert_reserver/<id>", methods=["GET", "POST"])
+@login_required
+def insert_reserver(id):
+    if request.method == "POST":
+
+        poney_id = request.form.get("poney")  
+        if not poney_id:
+            return redirect(url_for('reservation', id=id))  
+
+        adherent_id = None
+        cursor = mysql.connection.cursor()
+        query = """
+            SELECT Adherent.idAdherent,Adherent.poids
+            FROM User 
+            NATURAL JOIN Adherent 
+            WHERE User.username = %s AND User.idConnexion = Adherent.idAdherent
+        """
+        cursor.execute(query, (current_user.username,))
+        result = cursor.fetchone()
+        cursor.close()
+        if result:
+            adherent_id = result[0]
+            poids = result[1]
+        else:
+            return redirect(url_for('reservation', id=id))
+
+        # Insérer la réservation
+        try:
+            print(id, adherent_id, poney_id)
+            cursor = mysql.connection.cursor()
+            query_insert = """
+                INSERT INTO Reserver (idCoursRealise, idAdherent, idPoney)
+                VALUES (%s, %s, %s)
+            """
+            cursor.execute(query_insert, (id, adherent_id, poney_id))
+            mysql.connection.commit()
+            cursor.close()
+
+            return redirect(url_for('profile'))  
+        except Exception as e:
+            return redirect(url_for('reservation', id=id))
+    return redirect(url_for('home'))
 
 
 
