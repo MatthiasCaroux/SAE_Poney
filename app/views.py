@@ -65,15 +65,41 @@ def logout():
 def profile():
     cursor = mysql.connection.cursor()
     query = """
-        SELECT * 
+        SELECT role
         FROM User 
-        JOIN Adherent ON User.idConnexion = Adherent.idAdherent 
-        WHERE User.Username = %s
+        WHERE username = %s
     """
     cursor.execute(query, (current_user.username,))
-    user = cursor.fetchone()
+    role = cursor.fetchone()[0]
     cursor.close()
+
+    user = None
+    if role == 'moniteur':  # Si l'utilisateur est un moniteur
+        cursor = mysql.connection.cursor()
+        query = """
+            SELECT User.role, User.username, Moniteur.nom, Moniteur.prenom
+            FROM Moniteur 
+            LEFT JOIN User ON Moniteur.nom = User.nom AND Moniteur.prenom = User.prenom 
+            WHERE User.username = %s
+        """
+        cursor.execute(query, (current_user.username,))
+        user = cursor.fetchone()
+        cursor.close()
+    elif role == 'adherent':  # Si l'utilisateur est un adhérent
+        cursor = mysql.connection.cursor()
+        query = """
+            SELECT User.role, User.username, Adherent.nom, Adherent.prenom, Adherent.poids, Adherent.telephone, Adherent.cotisation
+            FROM Adherent 
+            LEFT JOIN User ON Adherent.nom = User.nom AND Adherent.prenom = User.prenom
+            WHERE User.username = %s
+        """
+        cursor.execute(query, (current_user.username,))
+        user = cursor.fetchone()
+        cursor.close()
+
     return render_template("compte.html", user=user)
+
+
 
 @app.route("/register/", methods=["GET", "POST"])
 def register():
@@ -85,6 +111,9 @@ def register():
         telephone = request.form.get("telephone")
         poids = request.form.get("poids")
         cotisation = request.form.get("cotisation") == "1"
+
+        # Debug : Afficher les valeurs récupérées
+        print(f"username={username}, password={password}, nom={nom}, prenom={prenom}, telephone={telephone}, poids={poids}, cotisation={cotisation}")
 
         if not username or not password or not nom or not prenom or not telephone or not poids:
             flash("Tous les champs sont obligatoires.", "danger")
@@ -99,6 +128,7 @@ def register():
                 VALUES (%s, %s, %s, %s, %s)
             """
             cursor.execute(query_adherent, (nom, prenom, telephone, poids, cotisation))
+            print("Adherent créé avec succès.")
 
             # Créer un utilisateur associé
             query_user = """
@@ -106,7 +136,9 @@ def register():
                 VALUES (%s, %s, %s, %s, 'adherent')
             """
             cursor.execute(query_user, (username, password, nom, prenom))
+            print("Utilisateur créé avec succès.")
 
+            # Commit des modifications
             mysql.connection.commit()
             cursor.close()
 
@@ -114,9 +146,12 @@ def register():
             return redirect(url_for("login"))
         except Exception as e:
             mysql.connection.rollback()
+            print(f"Erreur lors de l'inscription : {e}")  # Debug
             flash(f"Erreur lors de l'inscription : {str(e)}", "danger")
 
     return render_template("register.html")
+
+
 
 
 @app.route("/poney")
@@ -129,19 +164,30 @@ def reservation():
 
 @app.route("/planning")
 def planning():
-    current_week = datetime.now().isocalendar()[1]
+    current_week = datetime.now().isocalendar()[1]  # Semaine actuelle
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT idCours, Duree, DateJour, Semaine, Heure, Prix, Niveau, NbPersonne, DAYNAME(DateJour) AS Jour FROM CoursProgramme WHERE Semaine = %s", (current_week,))
+
+    # Requête SQL pour récupérer les cours de la semaine
+    query = """
+        SELECT 
+            idCours, Duree, DateJour, Semaine, Heure, Prix, Niveau, NbPersonne, DAYNAME(DateJour) AS Jour
+        FROM 
+            CoursProgramme 
+        WHERE 
+            Semaine = %s
+    """
+    cursor.execute(query, (current_week,))
     cours_raw = cursor.fetchall()
     cursor.close()
 
+    # Transformation des données
     cours = [
         {
             "id": row[0],
             "duree": row[1],
             "date": row[2],
             "semaine": row[3],
-            "heure": row[4],
+            "heure": row[4].seconds // 3600,  # Convertir timedelta en heures
             "prix": row[5],
             "niveau": row[6],
             "nb_personne": row[7],
@@ -151,6 +197,8 @@ def planning():
     ]
 
     return render_template("planning.html", cours=cours)
+
+
 
 
 @app.route("/adherer")

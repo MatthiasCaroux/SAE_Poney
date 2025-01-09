@@ -94,6 +94,36 @@ def get_moniteurs():
     return moniteurs
 
 
+def get_nombre_heure_travailler(idUser):
+    """
+    Calcule le nombre total d'heures travaillées pour un utilisateur donné.
+
+    Args:
+        idUser (int): L'ID de l'utilisateur (idUser).
+
+    Returns:
+        int: Nombre total d'heures travaillées.
+    """
+    cursor = mysql.connection.cursor()
+
+    # Requête SQL pour récupérer le nombre total d'heures travaillées
+    query = """
+        SELECT COALESCE(SUM(CoursProgramme.Duree), 0) AS TotalHeures
+        FROM User
+        JOIN Moniteur ON User.nom = Moniteur.nom AND User.prenom = Moniteur.prenom
+        JOIN Anime ON Moniteur.idMoniteur = Anime.idMoniteur
+        JOIN CoursRealise ON Anime.idCours = CoursRealise.idCoursRealise
+        JOIN CoursProgramme ON CoursRealise.idCours = CoursProgramme.idCours
+        WHERE User.idUser = %s
+    """
+    cursor.execute(query, (idUser,))
+    result = cursor.fetchone()
+    cursor.close()
+
+    # Retourner le nombre total d'heures travailler
+    return result[0] if result else 0
+
+
 
 
 def get_utilisateurs():

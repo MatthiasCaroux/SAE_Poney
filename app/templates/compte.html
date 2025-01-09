@@ -1,18 +1,32 @@
-{%extends "base.html"%}
+{% extends "base.html" %}
 {% block head %}
 {{ super() }}
-<link rel="stylesheet" href="{{ url_for('static' , filename = 'compte.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='compte.css') }}">
 {% endblock %}
 {% block content %}
 <h1>Mon Compte</h1>
+
 <div class="rectangle">
     <h2>Informations personnelles</h2>
-    <p>Nom d'utilisateur : <strong>{{user[0]}}</strong></p>
-    <p>Mot de passe : <strong>{{user[1]}}</strong></p>
-    <p>Nom: <strong>{{user[5]}}</strong></p>
-    <p>Poids : <strong>{{ user[4] }}</strong></p>
-    <p>Cotisation: <strong>{{user[6]}}</strong></p>
-    <p>Téléphone: <strong>{{user[7]}}</strong></p>
+    {% if user %}
+        <p>Nom d'utilisateur : <strong>{{ user[1] }}</strong></p>
+        {% if user[0] == 'moniteur' %}
+            <p>Rôle : <strong>Moniteur</strong></p>
+            <p>Nom : <strong>{{ user[2] }}</strong></p>
+            <p>Prénom : <strong>{{ user[3] }}</strong></p>
+        {% elif user[0] == 'adherent' %}
+            <p>Rôle : <strong>Adhérent</strong></p>
+            <p>Nom : <strong>{{ user[2] }}</strong></p>
+            <p>Prénom : <strong>{{ user[3] }}</strong></p>
+            <p>Poids : <strong>{{ user[4] }}</strong></p>
+            <p>Téléphone : <strong>{{ user[5] }}</strong></p>
+            <p>Cotisation : <strong>{{ 'Oui' if user[6] else 'Non' }}</strong></p>
+        {% endif %}
+    {% else %}
+        <p>Aucune information trouvée pour cet utilisateur.</p>
+    {% endif %}
     <p><a href="{{ url_for('logout') }}" class="bouton">Se déconnecter</a></p>
 </div>
+
+
 {% endblock %}

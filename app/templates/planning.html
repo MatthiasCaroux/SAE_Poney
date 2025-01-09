@@ -32,15 +32,12 @@
           {% for jour in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
           <td>
             {% for cours in cours %}
-              {% set cours_heure = cours[4].seconds // 3600 %}
-              {% if cours_heure == heure %}
-                {% if cours[8] == jour %}
-                  <div>
-                    <strong>{{ cours[6] }}</strong><br>
-                    Durée : {{ cours[3] }}h<br>
-                    <a href="{{ url_for('detail_cours', id=cours[0] + 1) }}">Détails du cours</a>
-                  </div>
-                {% endif %}
+              {% if cours['heure'] == heure and cours['jour'] == jour %}
+                <div>
+                  <strong>{{ cours['niveau'] }}</strong><br>
+                  Durée : {{ cours['duree'] }}h<br>
+                  <a href="{{ url_for('detail_cours', id=cours['id']) }}">Détails du cours</a>
+                </div>
               {% endif %}
             {% endfor %}
           </td>
