@@ -59,9 +59,9 @@ CREATE TABLE `Reserver` (
     `idAdherent` INTEGER,
     `idPoney` INTEGER,
     PRIMARY KEY(`idReserver`),
-    FOREIGN KEY(`idCoursRealise`) REFERENCES `CoursRealise`(`idCoursRealise`) ON UPDATE NO ACTION ON DELETE NO ACTION,
-    FOREIGN KEY(`idAdherent`) REFERENCES `Adherent`(`idAdherent`) ON UPDATE NO ACTION ON DELETE NO ACTION,
-    FOREIGN KEY(`idPoney`) REFERENCES `Poney`(`idPoney`) ON UPDATE NO ACTION ON DELETE NO ACTION
+    FOREIGN KEY(`idCoursRealise`) REFERENCES `CoursRealise`(`idCoursRealise`),
+    FOREIGN KEY(`idAdherent`) REFERENCES `Adherent`(`idAdherent`) ,
+    FOREIGN KEY(`idPoney`) REFERENCES `Poney`(`idPoney`);
 );
 
 -- Création de la table Anime avec les clés étrangères
