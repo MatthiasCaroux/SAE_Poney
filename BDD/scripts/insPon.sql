@@ -11,10 +11,10 @@ INSERT INTO `Poney` (`nomPoney`, `charge_max`) VALUES
 ('Daisy', 60.00);
 
 -- Insertion des données dans la table Adherent
-INSERT INTO `Adherent` (`poids`, `nom`, `cotisation`, `Telephone`) VALUES
-(45.50, 'Alice', TRUE, '0601020304'),
-(52.00, 'Bob', TRUE, '0605060708'),
-(48.00, 'Clara', TRUE, '0608091011');
+INSERT INTO `Adherent` (`poids`, `nom`, `cotisation`, `Telephone`, `prenom`) VALUES
+(45.50, 'AuPays', TRUE, '0601020304', 'Alice'),
+(52.00, 'Lenon', TRUE, '0605060708', 'Bob'),
+(48.00, 'Charlotte', TRUE, '0608091011', 'Clara');
 
 -- Insertion des données dans la table CoursProgramme
 INSERT INTO `CoursProgramme` (`Duree`, `DateJour`, `Semaine`, `Heure`, `Prix`, `Niveau`, `NbPersonne`) VALUES

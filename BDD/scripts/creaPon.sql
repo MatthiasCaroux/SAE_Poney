@@ -5,13 +5,14 @@ CREATE TABLE Moniteur (
     prenom VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE `User` (
-    `Username` VARCHAR(50),
-    `password` VARCHAR(50),
-    `idConnexion` INTEGER,
-    PRIMARY KEY(`Username`),
-    FOREIGN KEY(`idConnexion`) REFERENCES `Adherent`(`idAdherent`)
+CREATE TABLE User (
+    username VARCHAR(50) PRIMARY KEY,
+    password VARCHAR(255),
+    nom VARCHAR(50),
+    prenom VARCHAR(50),
+    role ENUM('adherent', 'moniteur', 'admin') DEFAULT 'adherent'
 );
+
 
 -- Création de la table Poney
 CREATE TABLE `Poney` (
@@ -22,14 +23,15 @@ CREATE TABLE `Poney` (
 );
 
 -- Création de la table Adherent
-CREATE TABLE `Adherent` (
-    `idAdherent` INTEGER AUTO_INCREMENT,
-    `poids` INTEGER,
-    `nom` VARCHAR(50),
-    `cotisation` BOOLEAN,
-    `Telephone` VARCHAR(20) CHECK (Telephone REGEXP '^[0-9]{10}$'),
-    PRIMARY KEY(`idAdherent`)
+CREATE TABLE Adherent (
+    idAdherent INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(50),
+    prenom VARCHAR(50),
+    telephone VARCHAR(10),
+    poids INT,
+    cotisation BOOLEAN
 );
+
 
 -- Création de la table CoursProgramme
 CREATE TABLE CoursProgramme (
