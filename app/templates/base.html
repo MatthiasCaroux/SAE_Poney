@@ -43,6 +43,9 @@
                     <a id="lien-nav" class="nav-item nav-link text-center" href="{{ url_for ('planning')  }}">Planning des cours</a>
                     <a id="lien-nav" class="nav-item nav-link text-center" href="{{ url_for ('poney')  }}">Voir nos Poney</a>
                     <a id="lien-nav" class="nav-item nav-link text-center" href="{{ url_for ('adherer')  }}">Adhérer</a>
+                    {% if userlog and current_user.username == 'admin' %}
+                    <a id="lien-nav" class="nav-item nav-link text-center" href="{{ url_for('admin') }}">Administration</a>
+                    {% endif %}
                 </div>
                 <!-- Boutons Se connecter et S'inscrire -->
                 {%block login%}

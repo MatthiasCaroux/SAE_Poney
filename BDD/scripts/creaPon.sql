@@ -6,10 +6,13 @@ CREATE TABLE `Moniteur` (
     PRIMARY KEY(`idMoniteur`)
 );
 CREATE TABLE `User` (
-    Username VARCHAR(50),
-    password VARCHAR(50),
-    PRIMARY KEY(Username)
+    `Username` VARCHAR(50),
+    `password` VARCHAR(50),
+    `idConnexion` INTEGER,
+    PRIMARY KEY(`Username`),
+    FOREIGN KEY(`idConnexion`) REFERENCES `Adherent`(`idAdherent`)
 );
+
 -- Création de la table Poney
 CREATE TABLE `Poney` (
     `idPoney` INTEGER AUTO_INCREMENT,
@@ -180,7 +183,7 @@ BEGIN
     DECLARE poidsAdherent DECIMAL(5,2);
     DECLARE chargeMaxPoney DECIMAL(5,2);
     SELECT poids, charge_max INTO poidsAdherent, chargeMaxPoney 
-    FROM Adherent NATURAL join RESERVER NATURAL JOIN PONEY WHERE idAdherent = NEW.idAdherent;
+    FROM Adherent NATURAL join Reserver NATURAL JOIN Poney WHERE idAdherent = NEW.idAdherent;
 
     IF poidsAdherent > chargeMaxPoney THEN
         SIGNAL SQLSTATE '45000'
@@ -202,9 +205,9 @@ BEGIN
     SELECT COUNT(*)
     INTO conflict_count
     FROM Reserver r
-    JOIN CoursRealise cr ON r.idCoursRealise = cr.idCoursRealise
+    JOIN CoursProgramme cr ON r.idCours = cr.idCours
     WHERE r.idPoney = NEW.idPoney
-    AND cr.DateJour = (SELECT DateJour FROM CoursRealise WHERE idCoursRealise = NEW.idCoursRealise)
+    AND cr.DateJour = (SELECT DateJour FROM CoursProgramme WHERE idCours = NEW.idCours)
     AND (
         TIMESTAMPADD(HOUR, 1, cr.Heure) > (SELECT Heure FROM CoursRealise WHERE idCoursRealise = NEW.idCoursRealise)
         OR TIMESTAMPADD(HOUR, -1, cr.Heure) < (SELECT Heure FROM CoursRealise WHERE idCoursRealise = NEW.idCoursRealise)

@@ -20,7 +20,10 @@ INSERT INTO `Adherent` (`poids`, `nom`, `cotisation`, `Telephone`) VALUES
 INSERT INTO `CoursProgramme` (`Duree`, `DateJour`, `Semaine`, `Heure`, `Prix`, `Niveau`, `NbPersonne`) VALUES
 (2, '2023-11-15', 46, '10:00:00', 50.00, 'Débutant', 8),
 (1, '2023-11-16', 46, '14:00:00', 75.00, 'Intermédiaire', 6),
-(2, '2023-11-17', 46, '16:00:00', 40.00, 'Avancé', 4);
+(2, '2023-11-17', 46, '16:00:00', 40.00, 'Avancé', 4),
+(2, '2025-01-07', 2, '10:00:00', 50.00, 'Débutant', 8),
+(1, '2025-01-08', 2, '14:00:00', 75.00, 'Intermédiaire', 6),
+(2, '2025-01-09', 2, '16:00:00', 40.00, 'Avancé', 4);
 --  Pour vérifier le trigger moniteur verif_cours (4, '2023-11-15', 46, '10:00:00', 50.00, 'Débutant', 8);
 
 -- Insertion des données dans la table CoursRealise
@@ -45,5 +48,7 @@ INSERT INTO `Anime` (`idMoniteur`, `idCours`) VALUES
 (2, 2),
 (3, 3);
 
-INSERT INTO `User` (`login`, `password`) VALUES
-('admin', 'admin'); 
+
+INSERT INTO User (Username, password, idConnexion)
+VALUES ('admin', 'admin', 1),
+
