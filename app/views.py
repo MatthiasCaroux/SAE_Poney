@@ -8,29 +8,38 @@ from flask import flash, redirect, url_for
 
 @app.context_processor
 def inject_userlog():
-    return {"userlog": current_user.is_authenticated}
+    if current_user.is_authenticated:
+        return {"userlog": current_user.is_authenticated, "role": getattr(current_user, "role", None)}
+    else:
+        return {"userlog": False, "role": None}
+
+
 
 @app.route("/")
 def home():
     return render_template("home.html")
 
 class User(UserMixin):
-    def __init__(self, username):
+    def __init__(self, username, role):
         self.username = username
+        self.role = role
 
     def get_id(self):
         return self.username
 
+
 @login_manager.user_loader
 def load_user(username):
     cursor = mysql.connection.cursor()
-    query = "SELECT username FROM User WHERE username = %s"
+    query = "SELECT username, role FROM User WHERE username = %s"
     cursor.execute(query, (username,))
     user = cursor.fetchone()
     cursor.close()
+
     if user:
-        return User(username=user[0])
+        return User(username=user[0], role=user[1])  # Charger le rôle avec l'utilisateur
     return None
+
 
 @app.route("/login/", methods=["GET", "POST"])
 def login():
@@ -39,19 +48,20 @@ def login():
         password = request.form['password']
 
         cursor = mysql.connection.cursor()
-        query = "SELECT username, password FROM User WHERE username = %s"
+        query = "SELECT username, password, role FROM User WHERE username = %s"
         cursor.execute(query, (username,))
         user = cursor.fetchone()
         cursor.close()
 
         if user and user[1] == password:
-            login_user(User(username=user[0]))
+            login_user(User(username=user[0], role=user[2]))
             return redirect(url_for('home'))
         else:
             error_message = "Nom d'utilisateur ou mot de passe incorrect"
             return render_template("login.html", error_message=error_message, user=user)
         
     return render_template("login.html", user=None)
+
 
 @app.route("/logout/")
 @login_required
@@ -222,6 +232,17 @@ def admin():
     else:
         flash("Accès réservé à l'administrateur.", "danger")
         return redirect(url_for("home"))
+    
+
+@app.route("/moniteur/")
+@login_required
+def moniteur():
+    if current_user.role == 'moniteur':
+        return render_template("moniteur.html")
+    else:
+        flash("Accès réservé au moniteurs.", "danger")
+        return redirect(url_for("home"))
+    
     
 
 @app.route("/insert_reserver/<id>", methods=["GET", "POST"])
