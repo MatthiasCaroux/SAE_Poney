@@ -1,7 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1>Page pour les moniteurs</h1>
-</div>
+    <div class="container mt-5">
+        <h1>Page pour les moniteurs</h1>
+        <h2>Les cours auxquels vous êtes inscrits</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Niveau du cours</th>
+                    <th scope="col">Jour du cours</th>
+                    <th scope="col">Duree</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cours in cours %}
+                <tr>
+                    <td>{{ cours['niveau'] }}</td>
+                    <td>{{ cours['DateJour'] }}</td>
+                    <td>{{ cours['Duree'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

@@ -238,12 +238,39 @@ def admin():
 @login_required
 def moniteur():
     if current_user.role == 'moniteur':
-        return render_template("moniteur.html")
+        cursor = mysql.connection.cursor()
+        query = """
+            SELECT DateJour, Moniteur.idMoniteur, duree, niveau
+            FROM CoursRealise
+            NATURAL JOIN Anime
+            NATURAL JOIN CoursProgramme
+            JOIN Moniteur ON Moniteur.idMoniteur = Anime.idMoniteur
+            JOIN User ON User.nom = Moniteur.nom AND User.prenom = Moniteur.prenom
+            WHERE User.idConnexion = %s
+        """
+        cursor.execute(query, (current_user.username,))
+        cours_raw = cursor.fetchall()
+        cursor.close()
+
+        cours = [
+        {
+            "DateJour": row[0],
+            "idMoniteur": row[1],
+            "duree": row[2],
+            "niveau": row[3],
+        }
+        for row in cours_raw
+    ]
+
+        print(cours)  # Vérifie les données transmises au template
+        return render_template("moniteur.html", cours=cours)
+
     else:
-        flash("Accès réservé au moniteurs.", "danger")
+        flash("Accès réservé aux moniteurs.", "danger")
         return redirect(url_for("home"))
-    
-    
+
+
+
 
 @app.route("/insert_reserver/<id>", methods=["GET", "POST"])
 @login_required
