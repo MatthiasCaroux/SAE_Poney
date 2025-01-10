@@ -5,13 +5,6 @@ CREATE TABLE Moniteur (
     prenom VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE User (
-    username VARCHAR(50) PRIMARY KEY,
-    password VARCHAR(255),
-    nom VARCHAR(50),
-    prenom VARCHAR(50),
-    role ENUM('adherent', 'moniteur', 'admin') DEFAULT 'adherent'
-);
 
 
 -- Création de la table Poney
