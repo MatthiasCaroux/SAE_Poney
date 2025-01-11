@@ -565,15 +565,24 @@ def admin_create_cours():
 @app.route("/moniteur/animer/<int:id_cours>", methods=["POST"])
 @login_required
 def animer_cours(id_cours):
-    if current_user.role != 'moniteur':
+    if current_user.role != "moniteur":
         flash("Accès réservé aux moniteurs.", "danger")
-        return redirect(url_for("home"))
+        return redirect(url_for("moniteur"))
 
     try:
-        # Récupérer l'ID du moniteur
-        id_moniteur = get_moniteur_id(current_user.username)
+        # Récupération de l'ID du moniteur
+        cursor = mysql.connection.cursor()
+        query = """
+            SELECT Moniteur.idMoniteur
+            FROM User 
+            NATURAL JOIN Moniteur
+            WHERE User.username = %s
+        """
+        cursor.execute(query, (current_user.username,))
+        id_moniteur = cursor.fetchone()[0]
+        cursor.close()
 
-        # Insérer le lien dans la table Anime
+        # Insertion dans Anime
         cursor = mysql.connection.cursor()
         query = """
             INSERT INTO Anime (idMoniteur, idCours)
@@ -583,10 +592,14 @@ def animer_cours(id_cours):
         mysql.connection.commit()
         cursor.close()
 
-        flash("Vous animez maintenant ce cours !", "success")
+        flash("Le cours a été associé avec succès.", "success")
+    except mysql.connector.Error as err:
+        # Gestion spécifique de l'erreur SQL 1644
+        if err.errno == 1644:
+            flash(f"Erreur lors de l'ajout : {err.msg}", "danger")
+        else:
+            flash("Une erreur inattendue s'est produite.", "danger")
     except Exception as e:
-        mysql.connection.rollback()
-        print(f"Erreur lors de l'ajout : {e}")
-        flash("Erreur lors de l'ajout : Impossible d'animer ce cours.", "danger")
-
-    return redirect(url_for("moniteur"))
+        flash(f"Erreur inattendue : {e}", "danger")
+    finally:
+        return redirect(url_for("moniteur"))
