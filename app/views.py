@@ -429,6 +429,24 @@ def create_moniteur():
     return render_template("create_moniteur.html")
 
 
+@app.route("/all_reservation")
+def all_reservation():
+    nom,prenom = get_nom_prenom_by_current_user(current_user.username)
+    adherent = get_adherent(prenom,nom)
+    reservations =get_reservation_by_adherent(adherent.idAdherent)
+    listecours = dict()
+    listeponey = dict()
+    for reservation in reservations:
+        listecours[reservation.idReserver] = get_cours_programme_by_id(reservation.idCoursRealise)
+        listeponey[reservation.idReserver] = get_poney_by_id(reservation.idPoney)
+        print(listecours[reservation.idReserver].date)
+        print(listeponey[reservation.idReserver].nomPoney)
+    print(reservations)
+    print
+    return render_template("all_reservation.html",reservations=reservations,listecours=listecours,listeponey=listeponey)
+
+
+
 @app.route("/moniteur/create-cours", methods=["GET", "POST"])
 @login_required
 def create_cours():

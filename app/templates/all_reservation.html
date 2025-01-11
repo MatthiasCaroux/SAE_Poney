@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='all_reservation.css') }}">
+{% endblock %}
+{% block content %}
+    <div class="reservations-container">
+        <h1>Toutes les Réservations</h1>
+        <ul class="reservations-list">
+            {% for reservation in reservations %}
+            <li class="reservation-item">
+                <p class="reservation-date">Vous avez réservé pour le cours du <strong>{{ listecours[reservation.idReserver].date }}</strong></p>
+                <p class="reservation-poney">Vous avez été affecté avec le poney <strong>{{ listeponey[reservation.idReserver].nomPoney }}</strong></p>
+                <a class="detail-link" href="{{ url_for('detail_cours', id=reservation.idCoursRealise) }}">Voir le détail du cours</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
