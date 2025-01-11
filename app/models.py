@@ -171,3 +171,37 @@ def get_moniteur_id(username_moniteur):
     moniteur = cursor.fetchone()
     cursor.close()
     return moniteur[0] if moniteur else None
+
+
+def get_nom_prenom_by_current_user(current_user_username):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT prenom, nom FROM User WHERE username = %s", (current_user_username,))
+    result = cursor.fetchone()
+    cursor.close()
+    return result
+
+class User:
+    def __init__(self, idConnexion,password, nom, prenom, role):
+        self.idConnexion = idConnexion
+        self.password = password
+        self.nom = nom
+        self.prenom = prenom
+        self.role = role
+
+    def __repr__(self):
+        return f"User(idConnexion={self.idConnexion}, nom={self.nom}, prenom={self.prenom}, role={self.role})"
+
+def get_user(prenom,nom):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM User WHERE prenom = %s and nom = %s", (prenom,nom,))
+    user = cursor.fetchone()
+    cursor.close()
+    return User(user[0], user[1], user[2], user[3], user[4])
+
+def get_adherent(prenom,nom):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM Adherent WHERE prenom = %s and nom = %s", (prenom,nom,))
+    adherent = cursor.fetchone()
+    cursor.close()
+    return Adherent(adherent[0], adherent[1], adherent[2], adherent[3], adherent[4])
+
