@@ -18,3 +18,14 @@
   .task-cell {
     background: #fff7d1;
   }
+
+  .text-right {
+    text-align: right;
+    margin-top: 20px; 
+    margin-bottom: 20px;
+}
+
+a {
+
+    text-decoration: none;
+}
