@@ -71,10 +71,32 @@
         </tbody>
     </table>
 
+    <h2>Les poneys : </h2>
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Charge Max</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for poney in poneys %}
+                <tr>
+                    <td>{{ poney[0] }}</td>
+                    <td>{{ poney[1] }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">Aucun poney trouvé.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
     <!-- Boutons d'actions -->
     <div class="mt-4">
         <a href="{{ url_for('create_moniteur') }}" class="btn btn-success mt-3">Créer un Moniteur</a>
         <a href="{{ url_for('admin_create_cours') }}" class="btn btn-primary mt-3">Créer un Cours</a>
+        <a href="{{ url_for('ajouter_poney') }}" class="btn btn-primary mt-3">Ajouter un poney</a>
     </div>
 </div>
 {% endblock %}
