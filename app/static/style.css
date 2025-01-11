@@ -5,18 +5,18 @@
 
 
 /* pour le footer */
-ul {
+footer ul {
     background-color: #001f3f;
     align-items: center;
 }
 
-ul li {
+footer ul li {
     display: inline;
     padding: 10px;
     color: white;
 }
 
-ul li a {
+footer ul li a {
     color: white;
     text-decoration: none;
 }

@@ -197,3 +197,33 @@ def get_adherent(prenom,nom):
     adherent = cursor.fetchone()
     cursor.close()
     return Adherent(adherent[0], adherent[1], adherent[2], adherent[3], adherent[4])
+
+class Reserver:
+    def __init__(self, idReserver, idCoursRealise, idAdherent, idPoney):
+        self.idReserver = idReserver
+        self.idCoursRealise = idCoursRealise
+        self.idAdherent = idAdherent
+        self.idPoney = idPoney
+
+    def __repr__(self):
+        return f"Reserver(idReserver={self.idReserver}, idCoursRealise={self.idCoursRealise}, idAdherent={self.idAdherent}, idPoney={self.idPoney})"
+
+
+def get_reservation_by_adherent(idAdherent):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM Reserver WHERE idAdherent = %s", (idAdherent,))
+    reservations = cursor.fetchall()
+    res = []
+    for r in reservations:
+        res.append(Reserver(r[0], r[1], r[2], r[3]))
+    
+    cursor.close()
+    return res
+
+
+def get_poney_by_id(idPoney):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM Poney WHERE idPoney = %s", (idPoney,))
+    poney = cursor.fetchone()
+    cursor.close()
+    return Poney(poney[0], poney[1], poney[2])
