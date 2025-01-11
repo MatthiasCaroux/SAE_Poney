@@ -6,8 +6,8 @@ from flask_login import LoginManager
 app = Flask(__name__)
 
 
-app.config['MYSQL_HOST'] = 'servinfo-maria'
-app.config['MYSQL_USER'] = 'niveau'
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'niveau'
 app.config['MYSQL_DB'] = 'DBniveau' #mettre sa propre BD
 app.config['SECRET_KEY'] = 'secret'
