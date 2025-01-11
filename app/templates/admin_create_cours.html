@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Créer un cours (Administrateur)</h1>
+    <form method="POST">
+        <div class="mb-3">
+            <label for="duree" class="form-label">Durée</label>
+            <input type="number" class="form-control" id="duree" name="duree" required>
+        </div>
+        <div class="mb-3">
+            <label for="date" class="form-label">Date</label>
+            <input type="date" class="form-control" id="date" name="date" required>
+        </div>
+        <div class="mb-3">
+            <label for="heure" class="form-label">Heure</label>
+            <input type="time" class="form-control" id="heure" name="heure" required>
+        </div>
+        <div class="mb-3">
+            <label for="prix" class="form-label">Prix</label>
+            <input type="number" step="0.01" class="form-control" id="prix" name="prix" required>
+        </div>
+        <div class="mb-3">
+            <label for="niveau" class="form-label">Niveau</label>
+            <select class="form-select" id="niveau" name="niveau" required>
+                <option value="Débutant">Débutant</option>
+                <option value="Intermédiaire">Intermédiaire</option>
+                <option value="Avancé">Avancé</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="nb_personne" class="form-label">Nombre de personnes</label>
+            <input type="number" class="form-control" id="nb_personne" name="nb_personne" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Créer le cours</button>
+    </form>
+</div>
+{% endblock %}
