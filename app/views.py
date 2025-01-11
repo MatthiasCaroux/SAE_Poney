@@ -238,36 +238,67 @@ def admin():
 @login_required
 def moniteur():
     if current_user.role == 'moniteur':
+        # Récupérer l'ID du moniteur
+        id_moniteur = get_moniteur_id(current_user.username)
+
+        # Récupérer les cours que le moniteur anime
         cursor = mysql.connection.cursor()
-        query = """
-            SELECT DateJour, Moniteur.idMoniteur, duree, niveau
-            FROM CoursRealise
-            NATURAL JOIN Anime
-            NATURAL JOIN CoursProgramme
-            JOIN Moniteur ON Moniteur.idMoniteur = Anime.idMoniteur
-            JOIN User ON User.nom = Moniteur.nom AND User.prenom = Moniteur.prenom
-            WHERE User.idConnexion = %s
+        query_cours_animes = """
+            SELECT DateJour, Heure, Niveau, NbPersonne 
+            FROM Moniteur 
+            NATURAL JOIN Anime 
+            NATURAL JOIN CoursRealise 
+            NATURAL JOIN CoursProgramme 
+            WHERE idMoniteur = %s;
         """
-        cursor.execute(query, (current_user.username,))
-        cours_raw = cursor.fetchall()
+        cursor.execute(query_cours_animes, (id_moniteur,))
+        cours_animes_raw = cursor.fetchall()
         cursor.close()
 
-        cours = [
-        {
-            "DateJour": row[0],
-            "idMoniteur": row[1],
-            "duree": row[2],
-            "niveau": row[3],
-        }
-        for row in cours_raw
-    ]
+        cours_animes = [
+            {
+                "DateJour": row[0],
+                "Heure": row[1],
+                "Niveau": row[2],
+                "NbPersonne": row[3],
+            }
+            for row in cours_animes_raw
+        ]
 
-        print(cours)  # Vérifie les données transmises au template
-        return render_template("moniteur.html", cours=cours)
+        # Récupérer les cours sans moniteur
+        cursor = mysql.connection.cursor()
+        query_sans_moniteur = """
+            SELECT idCoursRealise, DateJour, Heure, Niveau, NbPersonne
+            FROM CoursProgramme
+            natural join CoursRealise 
+            WHERE idCoursRealise NOT IN (
+                SELECT idCours FROM Anime
+            )
+        """
+        cursor.execute(query_sans_moniteur)
+        cours_sans_moniteur_raw = cursor.fetchall()
+        cursor.close()
+
+        # Transformation des données
+        cours_sans_moniteur = [
+            {
+                "idCoursRealise": row[0],
+                "DateJour": row[1],
+                "Heure": row[2],
+                "Niveau": row[3],
+                "NbPersonne": row[4],
+            }
+            for row in cours_sans_moniteur_raw
+        ]
+
+
+        # Renvoyer les données au template
+        return render_template("moniteur.html", cours_animes=cours_animes, cours_sans_moniteur=cours_sans_moniteur)
 
     else:
         flash("Accès réservé aux moniteurs.", "danger")
         return redirect(url_for("home"))
+
 
 
 
@@ -377,3 +408,189 @@ def create_moniteur():
 
     return render_template("create_moniteur.html")
 
+
+@app.route("/moniteur/create-cours", methods=["GET", "POST"])
+@login_required
+def create_cours():
+    if current_user.role != 'moniteur':
+        flash("Accès réservé aux moniteurs.", "danger")
+        return redirect(url_for("home"))
+
+    if request.method == "POST":
+        # Récupération des données du formulaire
+        duree = request.form.get("duree")
+        date = request.form.get("date")
+        heure = request.form.get("heure")
+        prix = request.form.get("prix")
+        niveau = request.form.get("niveau")
+        nb_personne = request.form.get("nb_personne")
+
+        print(f"Données reçues : {duree}, {date}, {heure}, {prix}, {niveau}, {nb_personne}")
+
+        # Validation des données
+        if not duree or not date or not heure or not prix or not niveau or not nb_personne:
+            flash("Tous les champs sont obligatoires.", "danger")
+            return redirect(url_for("create_cours"))
+
+        try:
+            # Conversion des champs de date et heure
+            date_obj = datetime.strptime(date, "%Y-%m-%d")
+            semaine = date_obj.isocalendar()[1]
+            mois = date_obj.month
+
+            # Récupération de l'ID du moniteur
+            cursor = mysql.connection.cursor()
+            query_moniteur = """
+                SELECT Moniteur.idMoniteur
+                FROM User 
+                NATURAL JOIN Moniteur
+                WHERE User.username = %s
+            """
+            cursor.execute(query_moniteur, (current_user.username,))
+            moniteur_row = cursor.fetchone()
+            if not moniteur_row:
+                flash("Impossible de récupérer l'identifiant du moniteur.", "danger")
+                return redirect(url_for("create_cours"))
+            id_moniteur = moniteur_row[0]
+            cursor.close()
+
+            print(f"ID Moniteur : {id_moniteur}")
+
+            # Création dans CoursProgramme
+            cursor = mysql.connection.cursor()
+            query_cours_programme = """
+                INSERT INTO CoursProgramme (Duree, DateJour, Semaine, Heure, Prix, Niveau, NbPersonne)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(query_cours_programme, (duree, date, semaine, heure, prix, niveau, nb_personne))
+            cours_programme_id = cursor.lastrowid
+            mysql.connection.commit()
+            cursor.close()
+            print(f"ID CoursProgramme créé : {cours_programme_id}")
+
+            # Création dans CoursRealise
+            cursor = mysql.connection.cursor()
+            query_cours_realise = """
+                INSERT INTO CoursRealise (idCours, DateJour, Semaine, Mois)
+                VALUES (%s, %s, %s, %s)
+            """
+            cursor.execute(query_cours_realise, (cours_programme_id, date, semaine, mois))
+            cours_realise_id = cursor.lastrowid
+            mysql.connection.commit()
+            cursor.close()
+            print(f"ID CoursRealise créé : {cours_realise_id}")
+
+            # Association avec le moniteur dans Anime
+            cursor = mysql.connection.cursor()
+            query_anime = """
+                INSERT INTO Anime (idMoniteur, idCours)
+                VALUES (%s, %s)
+            """
+            cursor.execute(query_anime, (id_moniteur, cours_realise_id))
+            mysql.connection.commit()
+            cursor.close()
+            print("Cours lié au moniteur avec succès.")
+
+            flash("Cours créé avec succès.", "success")
+            return redirect(url_for("moniteur"))
+        except Exception as e:
+            mysql.connection.rollback()
+            print(f"Erreur lors de la création : {e}")
+            flash(f"Erreur lors de la création : {e}", "danger")
+            return redirect(url_for("moniteur"))
+
+    return render_template("create_cours.html")
+
+
+
+@app.route("/admin/create-cours", methods=["GET", "POST"])
+@login_required
+def admin_create_cours():
+    if current_user.role != 'admin':
+        flash("Accès réservé à l'administrateur.", "danger")
+        return redirect(url_for("home"))
+
+    if request.method == "POST":
+        # Récupération des données du formulaire
+        duree = request.form.get("duree")
+        date = request.form.get("date")
+        heure = request.form.get("heure")
+        prix = request.form.get("prix")
+        niveau = request.form.get("niveau")
+        nb_personne = request.form.get("nb_personne")
+
+        print(f"Données reçues : {duree}, {date}, {heure}, {prix}, {niveau}, {nb_personne}")
+
+        # Validation des données
+        if not duree or not date or not heure or not prix or not niveau or not nb_personne:
+            flash("Tous les champs sont obligatoires.", "danger")
+            return redirect(url_for("admin_create_cours"))
+
+        try:
+            # Conversion des champs de date et heure
+            date_obj = datetime.strptime(date, "%Y-%m-%d")
+            semaine = date_obj.isocalendar()[1]
+            mois = date_obj.month
+
+            # Création dans CoursProgramme
+            cursor = mysql.connection.cursor()
+            query_cours_programme = """
+                INSERT INTO CoursProgramme (Duree, DateJour, Semaine, Heure, Prix, Niveau, NbPersonne)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(query_cours_programme, (duree, date, semaine, heure, prix, niveau, nb_personne))
+            cours_programme_id = cursor.lastrowid
+            mysql.connection.commit()
+            cursor.close()
+            print(f"ID CoursProgramme créé : {cours_programme_id}")
+
+            # Création dans CoursRealise
+            cursor = mysql.connection.cursor()
+            query_cours_realise = """
+                INSERT INTO CoursRealise (idCours, DateJour, Semaine, Mois)
+                VALUES (%s, %s, %s, %s)
+            """
+            cursor.execute(query_cours_realise, (cours_programme_id, date, semaine, mois))
+            mysql.connection.commit()
+            cursor.close()
+            print("Cours créé avec succès.")
+
+            flash("Cours créé avec succès.", "success")
+            return redirect(url_for("admin"))
+        except Exception as e:
+            mysql.connection.rollback()
+            print(f"Erreur lors de la création : {e}")
+            flash(f"Erreur lors de la création : {e}", "danger")
+            return redirect(url_for("admin"))
+
+    return render_template("admin_create_cours.html")
+
+
+@app.route("/moniteur/animer/<int:id_cours>", methods=["POST"])
+@login_required
+def animer_cours(id_cours):
+    if current_user.role != 'moniteur':
+        flash("Accès réservé aux moniteurs.", "danger")
+        return redirect(url_for("home"))
+
+    try:
+        # Récupérer l'ID du moniteur
+        id_moniteur = get_moniteur_id(current_user.username)
+
+        # Insérer le lien dans la table Anime
+        cursor = mysql.connection.cursor()
+        query = """
+            INSERT INTO Anime (idMoniteur, idCours)
+            VALUES (%s, %s)
+        """
+        cursor.execute(query, (id_moniteur, id_cours))
+        mysql.connection.commit()
+        cursor.close()
+
+        flash("Vous animez maintenant ce cours !", "success")
+    except Exception as e:
+        mysql.connection.rollback()
+        print(f"Erreur lors de l'ajout : {e}")
+        flash("Erreur lors de l'ajout : Impossible d'animer ce cours.", "danger")
+
+    return redirect(url_for("moniteur"))

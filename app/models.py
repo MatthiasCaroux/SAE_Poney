@@ -164,3 +164,10 @@ def get_poney_dispo(id_cours,poids):
     for p in poney:
         res.append(Poney(p[0], p[1], p[2]))
     return res
+
+def get_moniteur_id(username_moniteur):
+    cursor = mysql.connection.cursor()
+    cursor.execute("select idMoniteur from User natural join Moniteur WHERE username = %s", (username_moniteur,))
+    moniteur = cursor.fetchone()
+    cursor.close()
+    return moniteur[0] if moniteur else None
