@@ -36,6 +36,8 @@
             <p>{{ cours.nbpersonnes }}</p>
         </div>
     </div>
+    
+    <a href="{{ url_for('reservation', id = cours.idCours ) }}" class="btn">Réserver ce cours </a>
     <a href="{{ url_for('home') }}" class="btn">Retour à la liste des cours</a>
 </div>
 {% endblock %}
