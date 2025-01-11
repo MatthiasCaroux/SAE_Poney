@@ -177,6 +177,23 @@ def reservation(id):
     return render_template("reservation.html", cours=cours, listeponey=listeponey, id = id)
 
 
+import datetime
+def semaine(current_week):
+    semaine_courante = current_week
+    aujourd_hui = datetime.date.today()
+    debut_annee = datetime.date(aujourd_hui.year, 1, 1)
+    
+    lundi = (7 - debut_annee.weekday()) % 7
+    premier_lundi = debut_annee + datetime.timedelta(days=lundi)
+    
+    lundi_de_la_semaine = premier_lundi + datetime.timedelta(weeks=semaine_courante-2 )
+    
+    dates_de_la_semaine = {}
+    for i, nom_du_jour in enumerate(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']):
+        date_du_jour = lundi_de_la_semaine + datetime.timedelta(days=i)
+        dates_de_la_semaine[nom_du_jour] = date_du_jour
+    return dates_de_la_semaine
+
 @app.route("/planning", defaults={"current_week": None})
 @app.route("/planning/<int:current_week>")
 def planning(current_week):
@@ -198,15 +215,15 @@ def planning(current_week):
     cursor.execute(query, (current_week,))
     cours_raw = cursor.fetchall()
     cursor.close()
+    dates = semaine(current_week)
 
-    # Transformation des données
     cours = [
         {
             "id": row[0],
             "duree": row[1],
             "date": row[2],
             "semaine": row[3],
-            "heure": row[4].seconds // 3600,  # Convertir timedelta en heures
+            "heure": row[4].seconds // 3600, 
             "prix": row[5],
             "niveau": row[6],
             "nb_personne": row[7],
@@ -215,7 +232,7 @@ def planning(current_week):
         for row in cours_raw
     ]
 
-    return render_template("planning.html", cours=cours, current_week=current_week, datetime=datetime)
+    return render_template("planning.html", cours=cours, current_week=current_week, datetime=datetime, dates = dates)
 
 
 
