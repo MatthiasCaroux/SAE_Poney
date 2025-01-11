@@ -1,26 +1,71 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container mt-5">
-        <h1>Page pour les moniteurs</h1>
-        <h2>Les cours auxquels vous êtes inscrits</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Niveau du cours</th>
-                    <th scope="col">Jour du cours</th>
-                    <th scope="col">Duree</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for cours in cours %}
-                <tr>
-                    <td>{{ cours['niveau'] }}</td>
-                    <td>{{ cours['DateJour'] }}</td>
-                    <td>{{ cours['Duree'] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<div class="container mt-5">
+    <h1>Page pour les moniteurs</h1>
+
+    <!-- Cours animés par le moniteur -->
+    <h2>Les cours que vous animez</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Heure</th>
+                <th scope="col">Niveau</th>
+                <th scope="col">Nombre de personnes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cours in cours_animes %}
+            <tr>
+                <td>{{ cours['DateJour'] }}</td>
+                <td>{{ cours['Heure'] }}</td>
+                <td>{{ cours['Niveau'] }}</td>
+                <td>{{ cours['NbPersonne'] }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-center">Vous n'animez aucun cours pour le moment.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Cours sans moniteur -->
+    <h2>Les cours qui n'ont pas de moniteurs</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Heure</th>
+                <th scope="col">Niveau</th>
+                <th scope="col">Nombre de personnes</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cours in cours_sans_moniteur %}
+            <tr>
+                <td>{{ cours['DateJour'] }}</td>
+                <td>{{ cours['Heure'] }}</td>
+                <td>{{ cours['Niveau'] }}</td>
+                <td>{{ cours['NbPersonne'] }}</td>
+                <td>
+                    <form action="{{ url_for('animer_cours', id_cours=cours['idCoursRealise']) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-primary btn-sm">Animer ce cours</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center">Aucun cours sans moniteur trouvé.</td>
+            </tr>
+            {% endfor %}
+        </tbody>        
+    </table>
+
+
+    <!-- Bouton pour créer un cours -->
+    <a href="{{ url_for('create_cours') }}" class="btn btn-success mt-3">Créer un Cours</a>
+</div>
 {% endblock %}

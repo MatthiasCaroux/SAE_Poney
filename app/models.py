@@ -165,6 +165,13 @@ def get_poney_dispo(id_cours,poids):
         res.append(Poney(p[0], p[1], p[2]))
     return res
 
+def get_moniteur_id(username_moniteur):
+    cursor = mysql.connection.cursor()
+    cursor.execute("select idMoniteur from User natural join Moniteur WHERE username = %s", (username_moniteur,))
+    moniteur = cursor.fetchone()
+    cursor.close()
+    return moniteur[0] if moniteur else None
+
 
 def get_nom_prenom_by_current_user(current_user_username):
     cursor = mysql.connection.cursor()
@@ -197,3 +204,4 @@ def get_adherent(prenom,nom):
     adherent = cursor.fetchone()
     cursor.close()
     return Adherent(adherent[0], adherent[1], adherent[2], adherent[3], adherent[4])
+
