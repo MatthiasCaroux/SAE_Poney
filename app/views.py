@@ -194,11 +194,12 @@ def semaine(current_week):
         dates_de_la_semaine[nom_du_jour] = date_du_jour
     return dates_de_la_semaine
 
+ 
 @app.route("/planning", defaults={"current_week": None})
 @app.route("/planning/<int:current_week>")
 def planning(current_week):
     if current_week is None:
-        current_week = datetime.now().isocalendar()[1]
+        current_week = datetime.datetime.now().isocalendar()[1]
 
     cursor = mysql.connection.cursor()
 
