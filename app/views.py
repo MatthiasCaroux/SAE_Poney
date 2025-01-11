@@ -610,3 +610,45 @@ def animer_cours(id_cours):
         flash(f"Erreur inattendue : {e}", "danger")
     finally:
         return redirect(url_for("moniteur"))
+
+
+@app.route("/admin/ajouter_poney", methods=["GET", "POST"])
+@login_required
+def ajouter_poney():
+    if current_user.username != "admin":
+        flash("Accès réservé à l'administrateur.", "danger")
+        return redirect(url_for("home"))
+
+    if request.method == "POST":
+        nom = request.form.get("nom")
+        charge_max = request.form.get("charge_max")
+
+        if not nom or not charge_max:
+            flash("Tous les champs sont obligatoires.", "danger")
+            return redirect(url_for("ajouter_poney"))
+
+        try:
+            # Valider que charge_max est un nombre
+            charge_max = float(charge_max)
+        except ValueError:
+            flash("Le poids du poney doit être un nombre valide.", "danger")
+            return redirect(url_for("ajouter_poney"))
+
+        try:
+            cursor = mysql.connection.cursor()
+            query = """
+                INSERT INTO Poney (nomPoney, charge_max)
+                VALUES (%s, %s)
+            """
+            cursor.execute(query, (nom, charge_max))
+            mysql.connection.commit()
+            cursor.close()
+
+            flash("Poney ajouté avec succès.", "success")
+            return redirect(url_for("admin"))
+        except Exception as e:
+            mysql.connection.rollback()
+            flash(f"Erreur lors de l'ajout : {str(e)}", "danger")
+            return redirect(url_for("ajouter_poney"))
+
+    return render_template("ajouter_poney.html")
