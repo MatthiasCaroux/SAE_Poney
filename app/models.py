@@ -144,6 +144,12 @@ class Poney:
 
     def __repr__(self):
         return f"Poney(idPoney={self.idPoney}, nomPoney={self.nomPoney}, charge_max={self.charge_max})"
+    
+    def get_poids(self):
+        return self.charge_max
+    
+    def get_nom(self):
+        return self.nomPoney
 
 def get_poney():
     cursor = mysql.connection.cursor()
@@ -235,3 +241,47 @@ def get_poney_by_id(idPoney):
     poney = cursor.fetchone()
     cursor.close()
     return Poney(poney[0], poney[1], poney[2])
+
+
+def get_poneys():
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM Poney")
+    poneys = cursor.fetchall()
+    cursor.close()
+    return poneys
+
+
+
+def get_cours_by_id(id):
+    cursor = mysql.connection.cursor()
+    query = "SELECT * FROM CoursProgramme WHERE idCours = %s"
+    cursor.execute(query, (id,))
+    cours = cursor.fetchone()
+    cursor.close()
+    return {
+        "idCours": cours[0],
+        "duree": cours[1],
+        "date": cours[2],
+        "semaine": cours[3],
+        "heure": cours[4],
+        "prix": cours[5],
+        "niveau": cours[6],
+        "nbpersonnes": cours[7],
+    } if cours else None
+
+
+def get_participants_by_cours_id(id):
+    cursor = mysql.connection.cursor()
+    query = """
+        SELECT Adherent.nom, Adherent.prenom, Adherent.telephone, Adherent.poids
+        FROM Reserver
+        NATURAL JOIN Adherent
+        WHERE Reserver.idCoursRealise = %s
+    """
+    cursor.execute(query, (id,))
+    participants = cursor.fetchall()
+    cursor.close()
+    return [
+        {"nom": row[0], "prenom": row[1], "telephone": row[2], "poids": row[3]}
+        for row in participants
+    ]

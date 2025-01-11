@@ -20,3 +20,7 @@ footer ul li a {
     color: white;
     text-decoration: none;
 }
+
+canvas {
+    max-height: 300px;
+}

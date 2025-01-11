@@ -245,20 +245,59 @@ def adherer():
     return render_template("adherer.html")
 
 @app.route("/detail_cours/<id>")
+@login_required
 def detail_cours(id):
-    cours = get_cours_programme_by_id(id)
-    return render_template("detail_cours.html", cours=cours)
+    # Récupérer les détails du cours
+    cours = get_cours_by_id(id)
+
+    # Initialiser la liste des participants vide
+    participants = []
+
+    # Si l'utilisateur est moniteur ou admin, récupérer les participants
+    if current_user.role in ["moniteur", "admin"]:
+        participants = get_participants_by_cours_id(id)
+
+    return render_template("detail_cours.html", cours=cours, participants=participants)
+
 
 @app.route("/admin/")
 @login_required
 def admin():
     if current_user.username == 'admin':
+        # Récupérer les informations des moniteurs
         moniteurs = get_moniteurs()
         utilisateurs = get_utilisateurs()
-        return render_template("admin.html", moniteurs=moniteurs, utilisateurs=utilisateurs)
+        poneys = get_poneys()
+
+        # Construire le dictionnaire des poneys
+        dico_poney = {}
+        for poney in poneys:
+            dico_poney[poney[0]] = {"nomPoney": poney[1], "charge_max": poney[2]}
+
+        # Préparer les données pour le graphique
+        labels = [f"{moniteur[1]} {moniteur[2]}" for moniteur in moniteurs]  # Prénom + Nom
+        data = [float(moniteur[4]) for moniteur in moniteurs]  # Total d'heures prévues
+        colors = [
+            "rgba(255, 99, 132, 0.5)",
+            "rgba(54, 162, 235, 0.5)",
+            "rgba(255, 206, 86, 0.5)",
+            "rgba(75, 192, 192, 0.5)",
+            "rgba(153, 102, 255, 0.5)"
+        ] * (len(moniteurs) // 5 + 1)  # Génération de couleurs dynamiques
+
+        return render_template(
+            "admin.html",
+            moniteurs=moniteurs,
+            utilisateurs=utilisateurs,
+            dico_poney=dico_poney,
+            labels=labels,
+            data=data,
+            colors=colors
+        )
     else:
         flash("Accès réservé à l'administrateur.", "danger")
         return redirect(url_for("home"))
+
     
 
 @app.route("/moniteur/")
@@ -268,10 +307,11 @@ def moniteur():
         # Récupérer l'ID du moniteur
         id_moniteur = get_moniteur_id(current_user.username)
 
+
         # Récupérer les cours que le moniteur anime
         cursor = mysql.connection.cursor()
         query_cours_animes = """
-            SELECT DateJour, Heure, Niveau, NbPersonne 
+            SELECT DateJour, Heure, Niveau, NbPersonne, idCours
             FROM Moniteur 
             NATURAL JOIN Anime 
             NATURAL JOIN CoursRealise 
@@ -288,6 +328,7 @@ def moniteur():
                 "Heure": row[1],
                 "Niveau": row[2],
                 "NbPersonne": row[3],
+                "idCours": row[4]
             }
             for row in cours_animes_raw
         ]
@@ -320,7 +361,7 @@ def moniteur():
 
 
         # Renvoyer les données au template
-        return render_template("moniteur.html", cours_animes=cours_animes, cours_sans_moniteur=cours_sans_moniteur)
+        return render_template("moniteur.html", cours_animes=cours_animes, cours_sans_moniteur=cours_sans_moniteur, poney=poney)
 
     else:
         flash("Accès réservé aux moniteurs.", "danger")
