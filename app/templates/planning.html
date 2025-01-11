@@ -12,17 +12,26 @@
     <p class="text-center mb-5 text-muted">
       Retrouvez ci-dessous l'organisation de la semaine, avec les cours et activités proposés chaque jour.
     </p>
+    <div class="text-right">
+      <a href="{{ url_for('planning', current_week=current_week - 1) }}" class="gestion-planning">
+          <button class="btn btn-primary"> < </button>
+      </a>
+      <a href="{{ url_for('planning', current_week=current_week + 1) }}" class="gestion-planning">
+          <button class="btn btn-primary"> > </button>
+      </a>
+    </div>
+
     <table class="planning-table">
       <thead>
         <tr>
           <th style="width: 10%;">Heure</th>
-          <th>Lundi</th>
-          <th>Mardi</th>
-          <th>Mercredi</th>
-          <th>Jeudi</th>
-          <th>Vendredi</th>
-          <th>Samedi</th>
-          <th>Dimanche</th>
+          <th>Lundi <p>{{ dates['Monday'].strftime('%d/%m/%Y') }}</p></th>
+          <th>Mardi <p>{{ dates['Tuesday'].strftime('%d/%m/%Y') }}</p></th>
+          <th>Mercredi <p>{{ dates['Wednesday'].strftime('%d/%m/%Y') }}</p></th>
+          <th>Jeudi <p>{{ dates['Thursday'].strftime('%d/%m/%Y') }}</p></th>
+          <th>Vendredi <p>{{ dates['Friday'].strftime('%d/%m/%Y') }}</p></th>
+          <th>Samedi <p>{{ dates['Saturday'].strftime('%d/%m/%Y') }}</p></th>
+          <th>Dimanche <p>{{ dates['Sunday'].strftime('%d/%m/%Y') }}</p></th>
         </tr>
       </thead>
       <tbody>

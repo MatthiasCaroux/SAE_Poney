@@ -5,6 +5,8 @@ from app.models import *
 from app import mysql, login_manager
 from flask_login import login_user, login_required, logout_user, UserMixin, current_user
 from flask import flash, redirect, url_for
+import datetime
+
 
 @app.context_processor
 def inject_userlog():
@@ -177,9 +179,30 @@ def reservation(id):
     listeponey = get_poney_dispo(id,poids)
     return render_template("reservation.html", cours=cours, listeponey=listeponey, id = id)
 
-@app.route("/planning")
-def planning():
-    current_week = datetime.now().isocalendar()[1]  # Semaine actuelle
+
+
+def semaine(current_week):
+    semaine_courante = current_week
+    aujourd_hui = datetime.date.today()
+    debut_annee = datetime.date(aujourd_hui.year, 1, 1)
+    
+    lundi = (7 - debut_annee.weekday()) % 7
+    premier_lundi = debut_annee + datetime.timedelta(days=lundi)
+    
+    lundi_de_la_semaine = premier_lundi + datetime.timedelta(weeks=semaine_courante-2 )
+    
+    dates_de_la_semaine = {}
+    for i, nom_du_jour in enumerate(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']):
+        date_du_jour = lundi_de_la_semaine + datetime.timedelta(days=i)
+        dates_de_la_semaine[nom_du_jour] = date_du_jour
+    return dates_de_la_semaine
+
+ 
+@app.route("/planning", defaults={"current_week": None})
+@app.route("/planning/<int:current_week>")
+def planning(current_week):
+    if current_week is None:
+        current_week = datetime.datetime.now().isocalendar()[1]
     cursor = mysql.connection.cursor()
 
     # Requête SQL pour récupérer les cours de la semaine
@@ -194,15 +217,15 @@ def planning():
     cursor.execute(query, (current_week,))
     cours_raw = cursor.fetchall()
     cursor.close()
+    dates = semaine(current_week)
 
-    # Transformation des données
     cours = [
         {
             "id": row[0],
             "duree": row[1],
             "date": row[2],
             "semaine": row[3],
-            "heure": row[4].seconds // 3600,  # Convertir timedelta en heures
+            "heure": row[4].seconds // 3600, 
             "prix": row[5],
             "niveau": row[6],
             "nb_personne": row[7],
@@ -211,7 +234,8 @@ def planning():
         for row in cours_raw
     ]
 
-    return render_template("planning.html", cours=cours)
+    return render_template("planning.html", cours=cours, current_week=current_week, datetime=datetime, dates = dates)
+
 
 
 
@@ -620,4 +644,46 @@ def animer_cours(id_cours):
     except Exception as e:
         flash(f"Erreur inattendue : {e}", "danger")
     finally:
-        return redirect(url_for("moniteur")
+        return redirect(url_for("moniteur"))
+
+
+@app.route("/admin/ajouter_poney", methods=["GET", "POST"])
+@login_required
+def ajouter_poney():
+    if current_user.username != "admin":
+        flash("Accès réservé à l'administrateur.", "danger")
+        return redirect(url_for("home"))
+
+    if request.method == "POST":
+        nom = request.form.get("nom")
+        charge_max = request.form.get("charge_max")
+
+        if not nom or not charge_max:
+            flash("Tous les champs sont obligatoires.", "danger")
+            return redirect(url_for("ajouter_poney"))
+
+        try:
+            # Valider que charge_max est un nombre
+            charge_max = float(charge_max)
+        except ValueError:
+            flash("Le poids du poney doit être un nombre valide.", "danger")
+            return redirect(url_for("ajouter_poney"))
+
+        try:
+            cursor = mysql.connection.cursor()
+            query = """
+                INSERT INTO Poney (nomPoney, charge_max)
+                VALUES (%s, %s)
+            """
+            cursor.execute(query, (nom, charge_max))
+            mysql.connection.commit()
+            cursor.close()
+
+            flash("Poney ajouté avec succès.", "success")
+            return redirect(url_for("admin"))
+        except Exception as e:
+            mysql.connection.rollback()
+            flash(f"Erreur lors de l'ajout : {str(e)}", "danger")
+            return redirect(url_for("ajouter_poney"))
+
+    return render_template("ajouter_poney.html")

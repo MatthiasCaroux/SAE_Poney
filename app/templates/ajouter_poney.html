@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Ajouter un poney</h1>
+    <form method="POST">
+        <div class="mb-3">
+            <label for="nom" class="form-label">Nom du poney</label>
+            <input type="text" class="form-control" id="nom" name="nom" required>
+        </div>
+        <div class="mb-3">
+            <label for="charge_max" class="form-label">Charge maximale (kg)</label>
+            <input type="number" class="form-control" id="charge_max" name="charge_max" step="0.01" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Ajouter le poney</button>
+    </form>
+</div>
+{% endblock %}
