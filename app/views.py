@@ -1,6 +1,5 @@
 # from app import app
 from datetime import datetime
-from hashlib import sha256
 from flask import render_template, request
 from app.models import *
 from app import mysql, login_manager
@@ -89,7 +88,7 @@ def profile():
         cursor = mysql.connection.cursor()
         query = """
             SELECT User.role, User.username, Moniteur.nom, Moniteur.prenom
-            FROM Moniteur
+            FROM Moniteur 
             LEFT JOIN User ON Moniteur.nom = User.nom AND Moniteur.prenom = User.prenom 
             WHERE User.username = %s
         """
@@ -117,7 +116,6 @@ def register():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        sha256().update(password.encode())
         nom = request.form.get("nom")
         prenom = request.form.get("prenom")
         telephone = request.form.get("telephone")
@@ -179,13 +177,9 @@ def reservation(id):
     listeponey = get_poney_dispo(id,poids)
     return render_template("reservation.html", cours=cours, listeponey=listeponey, id = id)
 
-
-@app.route("/planning", defaults={"current_week": None})
-@app.route("/planning/<int:current_week>")
-def planning(current_week):
-    if current_week is None:
-        current_week = datetime.now().isocalendar()[1]
-
+@app.route("/planning")
+def planning():
+    current_week = datetime.now().isocalendar()[1]  # Semaine actuelle
     cursor = mysql.connection.cursor()
 
     # Requête SQL pour récupérer les cours de la semaine
@@ -197,7 +191,6 @@ def planning(current_week):
         WHERE 
             Semaine = %s
     """
-    
     cursor.execute(query, (current_week,))
     cours_raw = cursor.fetchall()
     cursor.close()
@@ -218,7 +211,7 @@ def planning(current_week):
         for row in cours_raw
     ]
 
-    return render_template("planning.html", cours=cours, current_week=current_week, datetime=datetime)
+    return render_template("planning.html", cours=cours)
 
 
 
