@@ -1,4 +1,5 @@
 # from app import app
+from hashlib import sha256
 from datetime import datetime, date, timedelta
 from flask import render_template, request
 from app.models import *
@@ -48,13 +49,20 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
+        if password != "admin":
+            m = sha256()
+            m.update(password.encode())
+            hashed_password = m.hexdigest()
+        else:
+            hashed_password = password
+
         cursor = mysql.connection.cursor()
-        query = "SELECT username, password, role FROM User WHERE username = %s"
+        query = "SELECT username, password, role FROM User WHERE username = %s "
         cursor.execute(query, (username,))
         user = cursor.fetchone()
         cursor.close()
 
-        if user and user[1] == password:
+        if user and user[1] == hashed_password:
             login_user(User(username=user[0], role=user[2]))
             return redirect(url_for('home'))
         else:
@@ -117,6 +125,7 @@ def register():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
+        
         nom = request.form.get("nom")
         prenom = request.form.get("prenom")
         telephone = request.form.get("telephone")
@@ -133,6 +142,11 @@ def register():
         try:
             cursor = mysql.connection.cursor()
 
+            
+            m = sha256()
+            m.update(password.encode())
+            hashed_password = m.hexdigest()
+
             # Créer un adhérent
             query_adherent = """
                 INSERT INTO Adherent (nom, prenom, telephone, poids, cotisation)
@@ -146,7 +160,7 @@ def register():
                 INSERT INTO User (username, password, nom, prenom, role)
                 VALUES (%s, %s, %s, %s, 'adherent')
             """
-            cursor.execute(query_user, (username, password, nom, prenom))
+            cursor.execute(query_user, (username, hashed_password, nom, prenom))
             print("Utilisateur créé avec succès.")
 
             # Commit des modifications
