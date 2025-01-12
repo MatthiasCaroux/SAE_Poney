@@ -144,6 +144,12 @@ class Poney:
 
     def __repr__(self):
         return f"Poney(idPoney={self.idPoney}, nomPoney={self.nomPoney}, charge_max={self.charge_max})"
+    
+    def get_poids(self):
+        return self.charge_max
+    
+    def get_nom(self):
+        return self.nomPoney
 
 def get_poney():
     cursor = mysql.connection.cursor()
@@ -173,7 +179,7 @@ def get_moniteur_id(username_moniteur):
     return moniteur[0] if moniteur else None
 
 
-def get_nom_prenom_by_current_user(current_user_username):
+def get_prenom_nom_by_current_user(current_user_username):
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT prenom, nom FROM User WHERE username = %s", (current_user_username,))
     result = cursor.fetchone()
@@ -205,3 +211,84 @@ def get_adherent(prenom,nom):
     cursor.close()
     return Adherent(adherent[0], adherent[1], adherent[2], adherent[3], adherent[4])
 
+  
+class Reserver:
+    def __init__(self, idReserver, idCoursRealise, idAdherent, idPoney):
+        self.idReserver = idReserver
+        self.idCoursRealise = idCoursRealise
+        self.idAdherent = idAdherent
+        self.idPoney = idPoney
+
+    def __repr__(self):
+        return f"Reserver(idReserver={self.idReserver}, idCoursRealise={self.idCoursRealise}, idAdherent={self.idAdherent}, idPoney={self.idPoney})"
+
+
+def get_reservation_by_adherent(idAdherent):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM Reserver WHERE idAdherent = %s", (idAdherent,))
+    reservations = cursor.fetchall()
+    res = []
+    for r in reservations:
+        res.append(Reserver(r[0], r[1], r[2], r[3]))
+    
+    cursor.close()
+    return res
+
+
+def get_poney_by_id(idPoney):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM Poney WHERE idPoney = %s", (idPoney,))
+    poney = cursor.fetchone()
+    cursor.close()
+    return Poney(poney[0], poney[1], poney[2])
+
+
+def get_poneys():
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM Poney")
+    poneys = cursor.fetchall()
+    cursor.close()
+    return poneys
+
+
+
+def get_cours_by_id(id):
+    cursor = mysql.connection.cursor()
+    query = "SELECT * FROM CoursProgramme WHERE idCours = %s"
+    cursor.execute(query, (id,))
+    cours = cursor.fetchone()
+    cursor.close()
+    return {
+        "idCours": cours[0],
+        "duree": cours[1],
+        "date": cours[2],
+        "semaine": cours[3],
+        "heure": cours[4],
+        "prix": cours[5],
+        "niveau": cours[6],
+        "nbpersonnes": cours[7],
+    } if cours else None
+
+
+def get_participants_by_cours_id(id):
+    cursor = mysql.connection.cursor()
+    query = """
+        SELECT Adherent.nom, Adherent.prenom, Adherent.telephone, Adherent.poids
+        FROM Reserver
+        NATURAL JOIN Adherent
+        WHERE Reserver.idCoursRealise = %s
+    """
+    cursor.execute(query, (id,))
+    participants = cursor.fetchall()
+    cursor.close()
+    return [
+        {"nom": row[0], "prenom": row[1], "telephone": row[2], "poids": row[3]}
+        for row in participants
+    ]
+def get_cours_realise_by_id_programme(id):
+    cursor = mysql.connection.cursor()
+    query = "SELECT idCoursRealise from CoursRealise where idCours = %s"
+    cursor.execute(query, (id,))
+    cours_realise = cursor.fetchone()
+    cursor.close()
+    return cours_realise[0] if cours_realise else None

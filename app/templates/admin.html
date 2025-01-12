@@ -46,6 +46,10 @@
         </tbody>
     </table>
 
+    <!-- Graphique des heures prévues -->
+    <h2>Graphique des heures de cours pour les moniteurs</h2>
+    <canvas id="graph_moniteurs" width="400" height="200"></canvas>
+
     <!-- Section : Les personnes du site et leurs rôles -->
     <h2>Les personnes du site et leurs rôles</h2>
     <table class="table table-striped mt-4">
@@ -71,10 +75,76 @@
         </tbody>
     </table>
 
+
+    <h2>Les poneys du club : </h2>
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Charge Max</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for idPoney, details in dico_poney.items() %}
+                <tr>
+                    <td>{{ idPoney }}</td>
+                    <td>{{ details.nomPoney }}</td>
+                    <td>{{ details.charge_max }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3" class="text-center">Aucun poney trouvé.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
     <!-- Boutons d'actions -->
     <div class="mt-4">
         <a href="{{ url_for('create_moniteur') }}" class="btn btn-success mt-3">Créer un Moniteur</a>
         <a href="{{ url_for('admin_create_cours') }}" class="btn btn-primary mt-3">Créer un Cours</a>
+        <a href="{{ url_for('ajouter_poney') }}" class="btn btn-primary mt-3">Ajouter un poney</a>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Récupérer les données injectées depuis Flask
+    const chartLabels = {{ labels | tojson }};
+    const data = {{ data | tojson }};
+    const colors = {{ colors | tojson }};
+
+    // Initialisation du graphique
+    const ctx = document.getElementById('graph_moniteurs').getContext('2d');
+    const moniteurChart = new Chart(ctx, {
+        type: 'pie', // Choix du graphique (camembert)
+        data: {
+            labels: chartLabels, // Noms des moniteurs
+            datasets: [{
+                label: 'Total d\'heures de cours',
+                data: data, // Heures totales
+                backgroundColor: colors, // Couleurs
+                borderColor: colors.map(c => c.replace('0.5', '1.0')), // Bordures
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return `${tooltipItem.label}: ${tooltipItem.raw} heures`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}

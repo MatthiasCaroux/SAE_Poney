@@ -23,7 +23,8 @@ INSERT INTO `CoursProgramme` (`Duree`, `DateJour`, `Semaine`, `Heure`, `Prix`, `
 (2, '2023-11-17', 46, '16:00:00', 40.00, 'Avancé', 4),
 (2, '2025-01-07', 2, '10:00:00', 50.00, 'Débutant', 8),
 (1, '2025-01-08', 2, '14:00:00', 75.00, 'Intermédiaire', 6),
-(2, '2025-01-09', 2, '16:00:00', 40.00, 'Avancé', 4);
+(2, '2025-01-09', 2, '16:00:00', 40.00, 'Avancé', 4),
+(2, '2025-01-14', 3, '10:00:00', 50.00, 'Débutant', 8);
 --  Pour vérifier le trigger moniteur verif_cours (4, '2023-11-15', 46, '10:00:00', 50.00, 'Débutant', 8);
 
 -- Insertion des données dans la table CoursRealise
