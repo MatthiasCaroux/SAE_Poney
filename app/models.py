@@ -285,3 +285,10 @@ def get_participants_by_cours_id(id):
         {"nom": row[0], "prenom": row[1], "telephone": row[2], "poids": row[3]}
         for row in participants
     ]
+def get_cours_realise_by_id_programme(id):
+    cursor = mysql.connection.cursor()
+    query = "SELECT idCoursRealise from CoursRealise where idCours = %s"
+    cursor.execute(query, (id,))
+    cours_realise = cursor.fetchone()
+    cursor.close()
+    return cours_realise[0] if cours_realise else None
