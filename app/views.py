@@ -177,6 +177,24 @@ def reservation(id):
     return render_template("reservation.html", cours=cours, listeponey=listeponey, id = id)
 
 
+def ajuster_semaine(annee, semaine):
+    """
+    Ajuste la semaine pour qu'elle boucle correctement entre la première et la dernière semaine de l'année.
+    """
+    nombre_semaines = datetime.date(annee, 12, 28).isocalendar()[1]
+
+    if semaine < 1:  
+        
+        annee -= 1
+        semaine = datetime.date(annee, 12, 28).isocalendar()[1]  
+    elif semaine > nombre_semaines:  
+       
+        annee += 1
+        semaine = 1 
+
+    return annee, semaine
+
+
 import datetime
 def semaine(current_week):
     semaine_courante = current_week
@@ -194,14 +212,33 @@ def semaine(current_week):
         dates_de_la_semaine[nom_du_jour] = date_du_jour
     return dates_de_la_semaine
 
+
+def calculer_dates_semaine(annee, semaine):
+    """
+    Retourne les dates des jours d'une semaine donnée.
+    """
+    lundi = datetime.date.fromisocalendar(annee, semaine, 1)
+    return {
+        "Monday": lundi,
+        "Tuesday": lundi + datetime.timedelta(days=1),
+        "Wednesday": lundi + datetime.timedelta(days=2),
+        "Thursday": lundi + datetime.timedelta(days=3),
+        "Friday": lundi + datetime.timedelta(days=4),
+        "Saturday": lundi + datetime.timedelta(days=5),
+        "Sunday": lundi + datetime.timedelta(days=6),
+    }
+
  
 @app.route("/planning", defaults={"current_week": None})
 @app.route("/planning/<int:current_week>")
 def planning(current_week):
-    if current_week is None:
-        current_week = datetime.datetime.now().isocalendar()[1]
 
     cursor = mysql.connection.cursor()
+    today = datetime.date.today()
+    current_year = today.year
+    current_year, current_week = ajuster_semaine(current_year, current_week)
+
+
 
     # Requête SQL pour récupérer les cours de la semaine
     query = """
@@ -212,11 +249,11 @@ def planning(current_week):
         WHERE 
             Semaine = %s
     """
-    
+      
     cursor.execute(query, (current_week,))
     cours_raw = cursor.fetchall()
     cursor.close()
-    dates = semaine(current_week)
+    dates = calculer_dates_semaine(current_year, current_week)
 
     cours = [
         {
@@ -233,7 +270,7 @@ def planning(current_week):
         for row in cours_raw
     ]
 
-    return render_template("planning.html", cours=cours, current_week=current_week, datetime=datetime, dates = dates)
+    return render_template("planning.html", cours=cours, current_week=current_week, datetime=datetime, dates = dates, current_year=current_year)
 
 
 
