@@ -29,3 +29,63 @@ a {
 
     text-decoration: none;
 }
+/* Formulaire */
+.form-inline {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+/* Conteneur des champs de saisie */
+.form-group {
+  margin: 0;
+}
+
+/* Style des labels */
+.form-group label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+/* Style des champs input */
+.form-control {
+  max-width: 120px; 
+  margin-bottom: 0;
+  height: 35px; 
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Bouton */
+.btn {
+  padding: 8px 15px;
+  font-size: 16px;
+  margin-top: 10px;
+  margin-left: 10px;
+  border-radius: 5px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #004085;
+}
+
+
+.form-inline .form-group {
+  display: flex;
+  align-items: center;
+}
+
+.form-inline .form-group label {
+  margin-right: 8px;
+}
