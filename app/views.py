@@ -1,11 +1,10 @@
 # from app import app
-from datetime import datetime
+from datetime import *
 from flask import render_template, request
 from app.models import *
 from app import mysql, login_manager
 from flask_login import login_user, login_required, logout_user, UserMixin, current_user
 from flask import flash, redirect, url_for
-import datetime
 
 
 @app.context_processor
@@ -183,17 +182,17 @@ def reservation(id):
 
 def semaine(current_week):
     semaine_courante = current_week
-    aujourd_hui = datetime.date.today()
-    debut_annee = datetime.date(aujourd_hui.year, 1, 1)
+    aujourd_hui = date.today()
+    debut_annee = date(aujourd_hui.year, 1, 1)
     
     lundi = (7 - debut_annee.weekday()) % 7
-    premier_lundi = debut_annee + datetime.timedelta(days=lundi)
+    premier_lundi = debut_annee + timedelta(days=lundi)
     
-    lundi_de_la_semaine = premier_lundi + datetime.timedelta(weeks=semaine_courante-2 )
+    lundi_de_la_semaine = premier_lundi + timedelta(weeks=semaine_courante-2 )
     
     dates_de_la_semaine = {}
     for i, nom_du_jour in enumerate(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']):
-        date_du_jour = lundi_de_la_semaine + datetime.timedelta(days=i)
+        date_du_jour = lundi_de_la_semaine + timedelta(days=i)
         dates_de_la_semaine[nom_du_jour] = date_du_jour
     return dates_de_la_semaine
 
@@ -202,7 +201,7 @@ def semaine(current_week):
 @app.route("/planning/<int:current_week>")
 def planning(current_week):
     if current_week is None:
-        current_week = datetime.datetime.now().isocalendar()[1]
+        current_week = datetime.now().isocalendar()[1]
     cursor = mysql.connection.cursor()
 
     # Requête SQL pour récupérer les cours de la semaine
@@ -391,6 +390,7 @@ def insert_reserver(id):
             return redirect(url_for('reservation', id=id))
 
         # Insérer la réservation
+        idcours_realise = get_cours_realise_by_id_programme(id)
         try:
             print(id, adherent_id, poney_id)
             cursor = mysql.connection.cursor()
@@ -398,7 +398,7 @@ def insert_reserver(id):
                 INSERT INTO Reserver (idCoursRealise, idAdherent, idPoney)
                 VALUES (%s, %s, %s)
             """
-            cursor.execute(query_insert, (id, adherent_id, poney_id))
+            cursor.execute(query_insert, (idcours_realise, adherent_id, poney_id))
             mysql.connection.commit()
             cursor.close()
 
