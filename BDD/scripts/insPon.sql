@@ -8,13 +8,34 @@ INSERT INTO `Moniteur` (`Prenom`, `nom`) VALUES
 INSERT INTO `Poney` (`nomPoney`, `charge_max`) VALUES
 ('Bella', 50.00),
 ('Charlie', 55.00),
-('Daisy', 60.00);
+('Daisy', 60.00),
+('Max', 65.00),
+('Luna', 55.00),
+('Rocky', 70.00),
+('Misty', 50.00),
+('Penny', 45.00),
+('Rex', 75.00),
+('Coco', 60.00),
+('Sasha', 65.00);
 
 -- Insertion des données dans la table Adherent
 INSERT INTO `Adherent` (`poids`, `nom`, `cotisation`, `Telephone`, `prenom`) VALUES
 (45.50, 'AuPays', TRUE, '0601020304', 'Alice'),
 (52.00, 'Lenon', TRUE, '0605060708', 'Bob'),
-(48.00, 'Charlotte', TRUE, '0608091011', 'Clara');
+(48.00, 'Charlotte', TRUE, '0608091011', 'Clara'),
+(60.00, 'Dupont', TRUE, '0612345678', 'David'),
+(55.50, 'Durand', TRUE, '0612341234', 'Eve'),
+(62.00, 'Martin', TRUE, '0609876543', 'Félix'),
+(57.00, 'Benoit', TRUE, '0612345679', 'Géraldine'),
+(50.50, 'Lemoine', TRUE, '0601112233', 'Hélène'),
+(49.00, 'Caron', TRUE, '0622334455', 'Isabelle'),
+(53.00, 'Robert', TRUE, '0633445566', 'Julien'),
+(58.00, 'Meunier', TRUE, '0644556677', 'Kévin'),
+(61.00, 'Moulin', TRUE, '0655667788', 'Laura'),
+(59.00, 'Dufresne', TRUE, '0666778899', 'Mélissa'),
+(56.00, 'Leclerc', TRUE, '0677889900', 'Nathalie'),
+(54.00, 'Bernard', TRUE, '0688990011', 'Olivier');
+
 
 -- Insertion des données dans la table CoursProgramme
 INSERT INTO `CoursProgramme` (`Duree`, `DateJour`, `Semaine`, `Heure`, `Prix`, `Niveau`, `NbPersonne`) VALUES
