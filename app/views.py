@@ -1,5 +1,7 @@
 # from app import app
 from hashlib import sha256
+from werkzeug.utils import secure_filename
+import os
 from datetime import datetime, date, timedelta
 from flask import render_template, request
 from app.models import *
@@ -7,6 +9,12 @@ from app import mysql, login_manager
 from flask_login import login_user, login_required, logout_user, UserMixin, current_user
 from flask import flash, redirect, url_for
 
+UPLOAD_FOLDER = 'static/images'  # Chemin où les fichiers seront stockés
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}  # Extensions autorisées
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.context_processor
 def inject_userlog():
@@ -799,8 +807,10 @@ def ajouter_poney():
     if request.method == "POST":
         nom = request.form.get("nom")
         charge_max = request.form.get("charge_max")
+        description = request.form.get("description")
 
-        if not nom or not charge_max:
+       
+        if not nom or not charge_max or not description :
             flash("Tous les champs sont obligatoires.", "danger")
             return redirect(url_for("ajouter_poney"))
 
@@ -814,10 +824,10 @@ def ajouter_poney():
         try:
             cursor = mysql.connection.cursor()
             query = """
-                INSERT INTO Poney (nomPoney, charge_max)
-                VALUES (%s, %s)
+                INSERT INTO Poney (nomPoney, charge_max, description, image)
+                VALUES (%s, %s, %s,/static/images/pepito.jpg) 
             """
-            cursor.execute(query, (nom, charge_max))
+            cursor.execute(query, (nom, charge_max,description))
             mysql.connection.commit()
             cursor.close()
 
