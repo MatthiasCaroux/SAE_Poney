@@ -52,9 +52,9 @@ a {
 
 /* Style des champs input */
 .form-control {
-  max-width: 120px; /* Limite la largeur pour éviter les champs trop larges */
+  max-width: 120px; 
   margin-bottom: 0;
-  height: 35px; /* Uniformisation de la hauteur des champs */
+  height: 35px; 
   padding: 8px 12px;
   font-size: 14px;
   border-radius: 5px;
@@ -80,7 +80,7 @@ a {
   border-color: #004085;
 }
 
-/* Espacement entre les éléments pour un rendu plus agréable */
+
 .form-inline .form-group {
   display: flex;
   align-items: center;
