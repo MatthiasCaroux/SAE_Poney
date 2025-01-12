@@ -5,18 +5,19 @@ INSERT INTO `Moniteur` (`Prenom`, `nom`) VALUES
 ('Pierre', 'Martin');
 
 -- Insertion des données dans la table Poney
-INSERT INTO `Poney` (`nomPoney`, `charge_max`) VALUES
-('Bella', 50.00),
-('Charlie', 55.00),
-('Daisy', 60.00),
-('Max', 65.00),
-('Luna', 55.00),
-('Rocky', 70.00),
-('Misty', 50.00),
-('Penny', 45.00),
-('Rex', 75.00),
-('Coco', 60.00),
-('Sasha', 65.00);
+INSERT INTO `Poney` (`nomPoney`, `charge_max`, `description`, `image`) VALUES
+('Bella', 50.00, 'Bella est une poney adorable, pleine d’énergie, qui aime galoper dans les champs.', '/static/images/pepito.jpg'),
+('Charlie', 55.00, 'Charlie est un poney calme et amical, idéal pour les promenades.', '/static/images/pepito.jpg'),
+('Daisy', 60.00, 'Daisy est un poney dynamique et toujours prête à sauter des obstacles.', '/static/images/pepito.jpg'),
+('Max', 65.00, 'Max est un poney robuste et fiable, apprécié pour son endurance.', '/static/images/pepito.jpg'),
+('Luna', 55.00, 'Luna est un poney gracieux et intelligent, toujours à l’écoute.', '/static/images/pepito.jpg'),
+('Rocky', 70.00, 'Rocky est un poney fort et rapide, souvent vu en tête lors des courses.', '/static/images/pepito.jpg'),
+('Misty', 50.00, 'Misty est un poney timide et calme, elle aime les environnements tranquilles.', '/static/images/pepito.jpg'),
+('Penny', 45.00, 'Penny est un poney espiègle qui aime explorer de nouveaux endroits.', '/static/images/pepito.jpg'),
+('Rex', 75.00, 'Rex est un poney imposant et puissant, idéal pour les tâches de travail.', '/static/images/pepito.jpg'),
+('Coco', 60.00, 'Coco est un poney joyeux, toujours prêt à jouer et à courir.', '/static/images/pepito.jpg'),
+('Sasha', 65.00, 'Sasha est un poney agile et enthousiaste, parfait pour les compétitions.', '/static/images/pepito.jpg');
+
 
 -- Insertion des données dans la table Adherent
 INSERT INTO `Adherent` (`poids`, `nom`, `cotisation`, `Telephone`, `prenom`) VALUES

@@ -3,6 +3,7 @@
 {% block head %}
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='poney.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -14,36 +15,16 @@
       <p class="text-muted mb-0">Vous pourrez les réserver dans la section "Réservation"</p>
     </div>
 
-    <!-- Poney Tonnerre -->
-    <div class="card mb-4 border p-3">
-      <div class="row g-3 align-items-center">
-        <div class="col-md-4">
-          <img src="{{ url_for('static', filename='images/tonnerre.jpg') }}" alt="Tonnerre" class="img-fluid rounded">
-        </div>
-        <div class="col-md-8">
-          <h3 class="h5 mb-3">Tonnerre :</h3>
-          <p class="text-muted" style="white-space: pre-wrap;">Tonnerre est un magnifique poney gris connu pour son tempérament doux et sa grande énergie sur les parcours. Il est idéal pour les cavaliers débutants ou expérimentés à la recherche d'un compagnon fiable et élégant. Avec sa crinière argentée et son allure majestueuse, Tonnerre attire toujours les regards !
-          </p>
-        </div>
-      </div>
+    {% for poney in poneys %}
+    <div class="card h-100 border-0 shadow-sm text-center p-3">
+      <img src="{{ poney[4] }}" alt="{{ poney[1] }}" class="rounded-circle mb-3" width="80" height="80">
+      <h3 class="h5 mb-2">{{ poney[1] }}</h3>
+      <p class="fw-bold mb-1">{{ poney[3] }}</p>
+      <p class="text-muted">Charge maximale : {{ poney[2] }} kg</p>
     </div>
+    {% endfor %}
 
-    <!-- Poney Pepito -->
-    <div class="card mb-4 border p-3">
-      <div class="row g-3 align-items-center">
-        <div class="col-md-4">
-          <img src="{{ url_for('static', filename='images/pepito.jpg') }}" alt="Pepito" class="img-fluid rounded">
-        </div>
-        <div class="col-md-8">
-          <h3 class="h5 mb-3">Pepito :</h3>
-          <p class="text-muted">
-            Pepito est un poney marron chaleureux et curieux, parfait pour les enfants et les cavaliers qui souhaitent créer une 
-            connexion spéciale avec leur monture. Sa robe brune éclatante et sa personnalité joueuse en font un favori du club. 
-            Pepito est aussi très docile, ce qui le rend idéal pour apprendre à prendre soin d’un poney.
-          </p>          
-        </div>
-      </div>
-    </div>
+    
 
   </div>
 </section>

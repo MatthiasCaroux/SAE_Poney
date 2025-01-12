@@ -168,7 +168,18 @@ def register():
 
 @app.route("/poney")
 def poney():
-    return render_template("poney.html")
+
+    cursor = mysql.connection.cursor()
+    query = """
+        SELECT *
+        FROM Poney
+        ORDER BY Poney.nomPoney
+    """
+    cursor.execute(query)
+    poneys = cursor.fetchall()
+    cursor.close()
+
+    return render_template("poney.html", poneys=poneys)
 
 @app.route("/reservation/<id>")
 def reservation(id):

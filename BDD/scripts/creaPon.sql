@@ -12,6 +12,8 @@ CREATE TABLE `Poney` (
     `idPoney` INTEGER AUTO_INCREMENT,
     `nomPoney` VARCHAR(50),
     `charge_max` DECIMAL(5,2),
+    `description` TEXT,
+    `image` VARCHAR(255),
     PRIMARY KEY(`idPoney`)
 );
 
