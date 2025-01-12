@@ -239,3 +239,21 @@ END |
 
 DELIMITER ;
 
+DELIMITER |
+CREATE TRIGGER deja_reserver
+BEFORE INSERT ON Reserver
+FOR EACH ROW
+BEGIN
+    DECLARE nbReservations INTEGER;
+    SELECT COUNT(*) INTO nbReservations
+    FROM Reserver
+    WHERE idAdherent = NEW.idAdherent
+    AND idCoursRealise = NEW.idCoursRealise;
+
+    IF nbReservations > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'L''adhérent a déjà réservé ce cours.';
+    END IF;
+END |
+
+DELIMITER ;
