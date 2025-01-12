@@ -183,37 +183,20 @@ def reservation(id):
 def ajuster_semaine(annee, semaine):
     """
     Ajuste la semaine pour qu'elle boucle correctement entre la première et la dernière semaine de l'année.
+    Si la semaine est inférieure à 1, elle passe à la dernière semaine de l'année précédente.
+    Si la semaine est supérieure au nombre de semaines de l'année, elle passe à la première semaine de l'année suivante.
     """
     nombre_semaines = datetime.date(annee, 12, 28).isocalendar()[1]
-
+    
     if semaine < 1:  
-        
-        annee -= 1
+        annee -= 1  
         semaine = datetime.date(annee, 12, 28).isocalendar()[1]  
     elif semaine > nombre_semaines:  
-       
-        annee += 1
-        semaine = 1 
+        annee += 1  
+        semaine = 1
 
     return annee, semaine
 
-
-def ajuster_semaine(annee, semaine):
-    """
-    Ajuste la semaine pour qu'elle boucle correctement entre la première et la dernière semaine de l'année.
-    """
-    nombre_semaines = datetime.date(annee, 12, 28).isocalendar()[1]
-
-    if semaine < 1:  
-        
-        annee -= 1
-        semaine = datetime.date(annee, 12, 28).isocalendar()[1]  
-    elif semaine > nombre_semaines:  
-       
-        annee += 1
-        semaine = 1 
-
-    return annee, semaine
 
 
 
@@ -250,18 +233,30 @@ def calculer_dates_semaine(annee, semaine):
     }
 
  
-@app.route("/planning", defaults={"current_week": None})
-@app.route("/planning/<int:current_week>")
-def planning(current_week):
-    if current_week is None:
-        current_week = datetime.datetime.now().isocalendar()[1]
-    cursor = mysql.connection.cursor()
+@app.route("/planning", methods=["GET"])
+def planning():
+
+
+    if request.method == 'GET':
+        current_year = request.args.get('current_year', default=None, type=int)
+        current_week = request.args.get('current_week', default=None, type=int)
+    else:
+        current_year = None
+        current_week = None
+
     today = datetime.date.today()
-    current_year = today.year
+
+    if current_year is None or current_week is None:
+        current_year = today.year
+        current_week = today.isocalendar()[1]
+
+    
     current_year, current_week = ajuster_semaine(current_year, current_week)
 
+    
+    dates = calculer_dates_semaine(current_year, current_week)
 
-
+    cursor = mysql.connection.cursor()
     # Requête SQL pour récupérer les cours de la semaine
     query = """
         SELECT 
@@ -275,7 +270,7 @@ def planning(current_week):
     cursor.execute(query, (current_week,))
     cours_raw = cursor.fetchall()
     cursor.close()
-    dates = calculer_dates_semaine(current_year, current_week)
+    
 
     cours = [
         {

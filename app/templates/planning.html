@@ -12,11 +12,24 @@
     <p class="text-center mb-5 text-muted">
       Retrouvez ci-dessous l'organisation de la semaine, avec les cours et activités proposés chaque jour.
     </p>
+
+    <form method="GET" action="{{ url_for('planning') }}" class="form-inline">
+      <div class="form-group">
+          <label for="year">Année</label>
+          <input type="number" id="year" name="current_year" value="{{ current_year }}" class="form-control" />
+      </div>
+      <div class="form-group">
+          <label for="week">Semaine</label>
+          <input type="number" id="week" name="current_week" value="{{ current_week }}" class="form-control" min="1" max="53" />
+      </div>
+      <button type="submit" class="btn btn-primary">Mettre à jour</button>
+    </form>
+
     <div class="text-right">
-      <a href="{{ url_for('planning', current_week=current_week - 1) }}" class="gestion-planning">
+      <a href="{{ url_for('planning', current_week=current_week - 1, current_year=current_year) }}" class="gestion-planning">
           <button class="btn btn-primary"> < </button>
       </a>
-      <a href="{{ url_for('planning', current_week=current_week + 1) }}" class="gestion-planning">
+      <a href="{{ url_for('planning', current_week=current_week + 1, current_year=current_year) }}" class="gestion-planning">
           <button class="btn btn-primary"> > </button>
       </a>
     </div>
@@ -37,23 +50,23 @@
       <tbody>
         {% for heure in range(8, 20) %}
         <tr>
-          <td>{{ heure }}:00</td>
-          {% for jour in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
-          <td>
-            {% for cours in cours %}
-              {% if cours['heure'] == heure and cours['jour'] == jour %}
-                <div>
-                  <strong>{{ cours['niveau'] }}</strong><br>
-                  Durée : {{ cours['duree'] }}h<br>
-                  <a href="{{ url_for('detail_cours', id=cours['id']) }}">Détails du cours</a>
-                </div>
-              {% endif %}
+            <td>{{ heure }}:00</td>
+            {% for jour in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+            <td>
+                {% for cours in cours %}
+                    {% if cours['heure'] == heure and cours['jour'] == jour and cours['semaine'] == current_week and cours['date'].year == current_year %}
+                    <div>
+                        <strong>{{ cours['niveau'] }}</strong><br>
+                        Durée : {{ cours['duree'] }}h<br>
+                        <a href="{{ url_for('detail_cours', id=cours['id']) }}">Détails du cours</a>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </td>
             {% endfor %}
-          </td>
-          {% endfor %}
         </tr>
         {% endfor %}
-      </tbody>
+    </tbody>    
     </table>
   </div>
 </section>
