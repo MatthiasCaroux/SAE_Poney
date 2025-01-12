@@ -57,9 +57,9 @@
                 <td>{{ cours['Niveau'] }}</td>
                 <td>{{ cours['NbPersonne'] }}</td>
                 <td>
-                    <form action="{{ url_for('animer_cours', id_cours=cours['idCoursRealise']) }}" method="POST" style="display:inline;">
+                    <form action="{{ url_for('animer_cours', id_cours_realise=cours['idCoursRealise']) }}" method="POST">
                         <button type="submit" class="btn btn-primary btn-sm">Animer ce cours</button>
-                    </form>
+                    </form>                                       
                 </td>
             </tr>
             {% else %}

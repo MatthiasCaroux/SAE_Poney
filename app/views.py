@@ -369,17 +369,25 @@ def moniteur():
     if current_user.role == 'moniteur':
         # Récupérer l'ID du moniteur
         id_moniteur = get_moniteur_id(current_user.username)
+        print(f"ID Moniteur récupéré : {id_moniteur}")
 
+        if not id_moniteur:
+            flash("Impossible de récupérer votre identifiant de moniteur.", "danger")
+            return redirect(url_for("home"))
 
         # Récupérer les cours que le moniteur anime
         cursor = mysql.connection.cursor()
         query_cours_animes = """
-            SELECT DateJour, Heure, Niveau, NbPersonne, idCours
-            FROM Moniteur 
-            NATURAL JOIN Anime 
-            NATURAL JOIN CoursRealise 
-            NATURAL JOIN CoursProgramme 
-            WHERE idMoniteur = %s;
+            SELECT 
+                CoursProgramme.DateJour, 
+                CoursProgramme.Heure, 
+                CoursProgramme.Niveau, 
+                CoursProgramme.NbPersonne, 
+                CoursRealise.idCoursRealise
+            FROM Anime
+            JOIN CoursRealise ON Anime.idCours = CoursRealise.idCoursRealise
+            JOIN CoursProgramme ON CoursRealise.idCours = CoursProgramme.idCours
+            WHERE Anime.idMoniteur = %s;
         """
         cursor.execute(query_cours_animes, (id_moniteur,))
         cours_animes_raw = cursor.fetchall()
@@ -399,21 +407,26 @@ def moniteur():
         # Récupérer les cours sans moniteur
         cursor = mysql.connection.cursor()
         query_sans_moniteur = """
-            SELECT idCoursRealise, DateJour, Heure, Niveau, NbPersonne
-            FROM CoursProgramme
-            natural join CoursRealise 
-            WHERE idCoursRealise NOT IN (
-                SELECT idCours FROM Anime
+            SELECT 
+                CoursProgramme.idCours, 
+                CoursProgramme.DateJour, 
+                CoursProgramme.Heure, 
+                CoursProgramme.Niveau, 
+                CoursProgramme.NbPersonne,
+                CoursRealise.idCoursRealise
+            FROM CoursRealise
+            JOIN CoursProgramme ON CoursRealise.idCours = CoursProgramme.idCours
+            WHERE CoursRealise.idCoursRealise NOT IN (
+                SELECT Anime.idCours FROM Anime
             )
         """
         cursor.execute(query_sans_moniteur)
         cours_sans_moniteur_raw = cursor.fetchall()
         cursor.close()
 
-        # Transformation des données
         cours_sans_moniteur = [
             {
-                "idCoursRealise": row[0],
+                "idCoursRealise": row[5],
                 "DateJour": row[1],
                 "Heure": row[2],
                 "Niveau": row[3],
@@ -423,14 +436,14 @@ def moniteur():
         ]
 
 
-        # Renvoyer les données au template
-        return render_template("moniteur.html", cours_animes=cours_animes, cours_sans_moniteur=cours_sans_moniteur, poney=poney)
-
+        return render_template(
+            "moniteur.html", 
+            cours_animes=cours_animes, 
+            cours_sans_moniteur=cours_sans_moniteur
+        )
     else:
         flash("Accès réservé aux moniteurs.", "danger")
         return redirect(url_for("home"))
-
-
 
 
 
@@ -555,6 +568,7 @@ def all_reservation():
 @app.route("/moniteur/create-cours", methods=["GET", "POST"])
 @login_required
 def create_cours():
+
     if current_user.role != 'moniteur':
         flash("Accès réservé aux moniteurs.", "danger")
         return redirect(url_for("home"))
@@ -709,47 +723,70 @@ def admin_create_cours():
     return render_template("admin_create_cours.html")
 
 
-@app.route("/moniteur/animer/<int:id_cours>", methods=["POST"])
+@app.route("/moniteur/animer/<int:id_cours_realise>", methods=["POST"])
 @login_required
-def animer_cours(id_cours):
+def animer_cours(id_cours_realise):
     if current_user.role != "moniteur":
         flash("Accès réservé aux moniteurs.", "danger")
         return redirect(url_for("moniteur"))
 
     try:
-        # Récupération de l'ID du moniteur
+        # Récupérer l'ID du moniteur
         cursor = mysql.connection.cursor()
-        query = """
+        query_moniteur = """
             SELECT Moniteur.idMoniteur
             FROM User 
             NATURAL JOIN Moniteur
             WHERE User.username = %s
         """
-        cursor.execute(query, (current_user.username,))
-        id_moniteur = cursor.fetchone()[0]
-        cursor.close()
+        cursor.execute(query_moniteur, (current_user.username,))
+        id_moniteur = cursor.fetchone()
 
-        # Insertion dans Anime
-        cursor = mysql.connection.cursor()
-        query = """
+        if not id_moniteur:
+            flash("Impossible de récupérer votre identifiant de moniteur.", "danger")
+            return redirect(url_for("moniteur"))
+
+        id_moniteur = id_moniteur[0]
+
+        # Vérifier que le cours existe
+        query_check_cours = """
+            SELECT idCoursRealise FROM CoursRealise WHERE idCoursRealise = %s
+        """
+        cursor.execute(query_check_cours, (id_cours_realise,))
+        cours_existe = cursor.fetchone()
+
+        if not cours_existe:
+            flash("Le cours sélectionné n'existe pas.", "danger")
+            return redirect(url_for("moniteur"))
+
+        # Vérifier si le cours est déjà assigné
+        query_check_anime = """
+            SELECT COUNT(*) FROM Anime WHERE idCours = %s
+        """
+        cursor.execute(query_check_anime, (id_cours_realise,))
+        deja_assigne = cursor.fetchone()[0]
+
+        if deja_assigne:
+            flash("Ce cours est déjà animé par un moniteur.", "warning")
+            return redirect(url_for("moniteur"))
+
+        # Insérer dans Anime
+        query_insert_anime = """
             INSERT INTO Anime (idMoniteur, idCours)
             VALUES (%s, %s)
         """
-        cursor.execute(query, (id_moniteur, id_cours))
+        cursor.execute(query_insert_anime, (id_moniteur, id_cours_realise))
         mysql.connection.commit()
         cursor.close()
 
         flash("Le cours a été associé avec succès.", "success")
-    except mysql.connector.Error as err:
-        # Gestion spécifique de l'erreur SQL 1644
-        if err.errno == 1644:
-            flash(f"Erreur lors de l'ajout : {err.msg}", "danger")
-        else:
-            flash("Une erreur inattendue s'est produite.", "danger")
     except Exception as e:
+        mysql.connection.rollback()
         flash(f"Erreur inattendue : {e}", "danger")
     finally:
         return redirect(url_for("moniteur"))
+
+
 
 
 @app.route("/admin/ajouter_poney", methods=["GET", "POST"])
