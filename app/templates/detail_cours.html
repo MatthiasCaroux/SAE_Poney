@@ -36,9 +36,36 @@
             <p>{{ cours.nbpersonnes }}</p>
         </div>
     </div>
-    
-    <a href="{{ url_for('reservation', id = cours.idCours ) }}" class="btn">Réserver ce cours </a>
+
+    <!-- Section des participants : visible seulement pour admin/moniteur -->
+    {% if participants %}
+    <div class="participants">
+        <h2>Participants</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Téléphone</th>
+                    <th>Poids</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for participant in participants %}
+                <tr>
+                    <td>{{ participant.nom }}</td>
+                    <td>{{ participant.prenom }}</td>
+                    <td>{{ participant.telephone }}</td>
+                    <td>{{ participant.poids }} kg</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Boutons de navigation -->
+    <a href="{{ url_for('reservation', id=cours.idCours) }}" class="btn">Réserver ce cours</a>
     <a href="{{ url_for('home') }}" class="btn">Retour à la liste des cours</a>
 </div>
 {% endblock %}
-
