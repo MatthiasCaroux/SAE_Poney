@@ -1,0 +1,61 @@
+
+.card-deck {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px; 
+    padding: 20px;
+    margin-top: 30px;
+  }
+  
+
+  .card {
+    width: 100%; 
+    padding: 15px;
+    border-radius: 15px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    background-color: #fff; 
+    text-align: center; 
+
+    flex-direction: inline-block; 
+    align-items: center;
+  }
+
+  
+  
+  .card img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%; 
+
+    margin-bottom: 15px;
+  }
+  
+ 
+  .card h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+    transition: color 0.3s ease;
+  }
+  
+  /* Charge maximale du poney */
+  .card .charge-max {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #4CAF50; 
+    margin-bottom: 15px;
+  }
+  
+  /* Description du poney */
+  .card p {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.4;
+    text-align: center;
+  }
+  
+
+  

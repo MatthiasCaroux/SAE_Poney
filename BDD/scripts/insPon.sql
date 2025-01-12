@@ -5,16 +5,38 @@ INSERT INTO `Moniteur` (`Prenom`, `nom`) VALUES
 ('Pierre', 'Martin');
 
 -- Insertion des données dans la table Poney
-INSERT INTO `Poney` (`nomPoney`, `charge_max`) VALUES
-('Bella', 50.00),
-('Charlie', 55.00),
-('Daisy', 60.00);
+INSERT INTO `Poney` (`nomPoney`, `charge_max`, `description`, `image`) VALUES
+('Bella', 50.00, 'Bella est une poney adorable, pleine d’énergie, qui aime galoper dans les champs.', '/static/images/pepito.jpg'),
+('Charlie', 55.00, 'Charlie est un poney calme et amical, idéal pour les promenades.', '/static/images/pepito.jpg'),
+('Daisy', 60.00, 'Daisy est un poney dynamique et toujours prête à sauter des obstacles.', '/static/images/pepito.jpg'),
+('Max', 65.00, 'Max est un poney robuste et fiable, apprécié pour son endurance.', '/static/images/pepito.jpg'),
+('Luna', 55.00, 'Luna est un poney gracieux et intelligent, toujours à l’écoute.', '/static/images/pepito.jpg'),
+('Rocky', 70.00, 'Rocky est un poney fort et rapide, souvent vu en tête lors des courses.', '/static/images/pepito.jpg'),
+('Misty', 50.00, 'Misty est un poney timide et calme, elle aime les environnements tranquilles.', '/static/images/pepito.jpg'),
+('Penny', 45.00, 'Penny est un poney espiègle qui aime explorer de nouveaux endroits.', '/static/images/pepito.jpg'),
+('Rex', 75.00, 'Rex est un poney imposant et puissant, idéal pour les tâches de travail.', '/static/images/pepito.jpg'),
+('Coco', 60.00, 'Coco est un poney joyeux, toujours prêt à jouer et à courir.', '/static/images/pepito.jpg'),
+('Sasha', 65.00, 'Sasha est un poney agile et enthousiaste, parfait pour les compétitions.', '/static/images/pepito.jpg');
+
 
 -- Insertion des données dans la table Adherent
 INSERT INTO `Adherent` (`poids`, `nom`, `cotisation`, `Telephone`, `prenom`) VALUES
 (45.50, 'AuPays', TRUE, '0601020304', 'Alice'),
 (52.00, 'Lenon', TRUE, '0605060708', 'Bob'),
-(48.00, 'Charlotte', TRUE, '0608091011', 'Clara');
+(48.00, 'Charlotte', TRUE, '0608091011', 'Clara'),
+(60.00, 'Dupont', TRUE, '0612345678', 'David'),
+(55.50, 'Durand', TRUE, '0612341234', 'Eve'),
+(62.00, 'Martin', TRUE, '0609876543', 'Félix'),
+(57.00, 'Benoit', TRUE, '0612345679', 'Géraldine'),
+(50.50, 'Lemoine', TRUE, '0601112233', 'Hélène'),
+(49.00, 'Caron', TRUE, '0622334455', 'Isabelle'),
+(53.00, 'Robert', TRUE, '0633445566', 'Julien'),
+(58.00, 'Meunier', TRUE, '0644556677', 'Kévin'),
+(61.00, 'Moulin', TRUE, '0655667788', 'Laura'),
+(59.00, 'Dufresne', TRUE, '0666778899', 'Mélissa'),
+(56.00, 'Leclerc', TRUE, '0677889900', 'Nathalie'),
+(54.00, 'Bernard', TRUE, '0688990011', 'Olivier');
+
 
 -- Insertion des données dans la table CoursProgramme
 INSERT INTO `CoursProgramme` (`Duree`, `DateJour`, `Semaine`, `Heure`, `Prix`, `Niveau`, `NbPersonne`) VALUES
@@ -24,14 +46,69 @@ INSERT INTO `CoursProgramme` (`Duree`, `DateJour`, `Semaine`, `Heure`, `Prix`, `
 (2, '2025-01-07', 2, '10:00:00', 50.00, 'Débutant', 8),
 (1, '2025-01-08', 2, '14:00:00', 75.00, 'Intermédiaire', 6),
 (2, '2025-01-09', 2, '16:00:00', 40.00, 'Avancé', 4),
-(2, '2025-01-14', 3, '10:00:00', 50.00, 'Débutant', 8);
+(2, '2025-01-14', 3, '10:00:00', 50.00, 'Débutant', 8),
+(1, '2024-03-05', 9, '10:00:00', 55.00, 'Débutant', 8),
+(2, '2024-03-06', 9, '14:00:00', 80.00, 'Intermédiaire', 6),
+(1, '2024-03-07', 9, '16:00:00', 45.00, 'Avancé', 5),
+(2, '2024-06-15', 24, '10:00:00', 50.00, 'Débutant', 10),
+(1, '2024-06-16', 24, '14:00:00', 70.00, 'Intermédiaire', 7),
+(2, '2024-06-17', 24, '16:00:00', 35.00, 'Avancé', 6),
+(1, '2024-09-10', 36, '10:00:00', 55.00, 'Débutant', 8),
+(2, '2024-09-11', 36, '14:00:00', 75.00, 'Intermédiaire', 5),
+(1, '2024-09-12', 36, '16:00:00', 40.00, 'Avancé', 4),
+(2, '2025-02-01', 5, '10:00:00', 50.00, 'Débutant', 8),
+(1, '2025-02-02', 5, '14:00:00', 70.00, 'Intermédiaire', 6),
+(2, '2025-02-03', 5, '16:00:00', 35.00, 'Avancé', 4),
+(2, '2025-05-10', 18, '10:00:00', 50.00, 'Débutant', 8),
+(1, '2025-05-11', 18, '14:00:00', 70.00, 'Intermédiaire', 6),
+(2, '2025-05-12', 18, '16:00:00', 40.00, 'Avancé', 4),
+(2, '2026-01-05', 1, '10:00:00', 50.00, 'Débutant', 8),
+(1, '2026-01-06', 1, '14:00:00', 75.00, 'Intermédiaire', 6),
+(2, '2026-01-07', 1, '16:00:00', 40.00, 'Avancé', 4),
+(2, '2026-04-11', 15, '10:00:00', 55.00, 'Débutant', 8),
+(1, '2026-04-12', 15, '14:00:00', 70.00, 'Intermédiaire', 6),
+(2, '2026-04-13', 15, '16:00:00', 35.00, 'Avancé', 6),
+(1, '2026-07-05', 28, '10:00:00', 50.00, 'Débutant', 10),
+(2, '2026-07-06', 28, '14:00:00', 75.00, 'Intermédiaire', 8),
+(1, '2026-07-07', 28, '16:00:00', 45.00, 'Avancé', 6);
 --  Pour vérifier le trigger moniteur verif_cours (4, '2023-11-15', 46, '10:00:00', 50.00, 'Débutant', 8);
 
 -- Insertion des données dans la table CoursRealise
 INSERT INTO `CoursRealise` (`DateJour`, `Semaine`, `Mois`, `idCours`) VALUES
 ('2023-11-15', 46, 11, 1),
 ('2023-11-16', 46, 11, 2),
-('2023-11-17', 46, 11, 3);
+('2023-11-17', 46, 11, 3),
+('2024-01-05', 1, 1, 4),
+('2024-01-06', 1, 1, 5),
+('2024-01-07', 1, 1, 6),
+('2024-03-05', 9, 3, 7),
+('2024-03-06', 9, 3, 8),
+('2024-03-07', 9, 3, 9),
+('2024-06-15', 24, 6, 10),
+('2024-06-16', 24, 6, 11),
+('2024-06-17', 24, 6, 12),
+('2024-09-10', 36, 9, 13),
+('2024-09-11', 36, 9, 14),
+('2024-09-12', 36, 9, 15),
+('2025-02-01', 5, 2, 16),
+('2025-02-02', 5, 2, 17),
+('2025-02-03', 5, 2, 18),
+('2025-05-10', 18, 5, 19),
+('2025-05-11', 18, 5, 20),
+('2025-05-12', 18, 5, 21),
+('2025-08-05', 31, 8, 22),
+('2025-08-06', 31, 8, 23),
+('2025-08-07', 31, 8, 24),
+('2026-01-05', 1, 1, 25),
+('2026-01-06', 1, 1, 26),
+('2026-01-07', 1, 1, 27),
+('2026-04-11', 15, 4, 28),
+('2026-04-12', 15, 4, 29),
+('2026-04-13', 15, 4, 30),
+('2026-07-05', 28, 7, 31),
+('2026-07-06', 28, 7, 32),
+('2026-07-07', 28, 7, 33);
+
 --  pour vérifier le trigger moniteur verif_cours('2023-11-15', 46, 11, 4);
 
 -- Insertion des données dans la table Reserver
