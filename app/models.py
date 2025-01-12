@@ -179,7 +179,7 @@ def get_moniteur_id(username_moniteur):
     return moniteur[0] if moniteur else None
 
 
-def get_nom_prenom_by_current_user(current_user_username):
+def get_prenom_nom_by_current_user(current_user_username):
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT prenom, nom FROM User WHERE username = %s", (current_user_username,))
     result = cursor.fetchone()

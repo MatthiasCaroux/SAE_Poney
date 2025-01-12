@@ -173,7 +173,7 @@ def poney():
 @app.route("/reservation/<id>")
 def reservation(id):
     cours = get_cours_programme_by_id(id)
-    prenom,nom = get_nom_prenom_by_current_user(current_user.username)
+    prenom,nom = get_prenom_nom_by_current_user(current_user.username)
     user = get_user(prenom,nom)
     poids = get_adherent(prenom,nom).poids
     listeponey = get_poney_dispo(id,poids)
@@ -381,7 +381,7 @@ def insert_reserver(id):
             return redirect(url_for('reservation', id=id))  
 
         # Récupérer l'ID de l'adhérent
-        prenom,nom = get_nom_prenom_by_current_user(current_user.username)
+        prenom,nom = get_prenom_nom_by_current_user(current_user.username)
         user = get_user(prenom,nom)
         adherent = get_adherent(prenom,nom)
         if adherent:
@@ -472,7 +472,7 @@ def create_moniteur():
 
 @app.route("/all_reservation")
 def all_reservation():
-    nom,prenom = get_nom_prenom_by_current_user(current_user.username)
+    prenom,nom = get_prenom_nom_by_current_user(current_user.username)
     adherent = get_adherent(prenom,nom)
     reservations =get_reservation_by_adherent(adherent.idAdherent)
     listecours = dict()
