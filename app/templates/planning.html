@@ -55,11 +55,11 @@
             <td>
                 {% for cours in cours %}
                     {% if cours['heure'] == heure and cours['jour'] == jour and cours['semaine'] == current_week and cours['date'].year == current_year %}
-                    <div>
-                        <strong>{{ cours['niveau'] }}</strong><br>
-                        Durée : {{ cours['duree'] }}h<br>
-                        <a href="{{ url_for('detail_cours', id=cours['id']) }}">Détails du cours</a>
-                    </div>
+                      <div>
+                          <strong>{{ cours['niveau'] }}</strong><br>
+                          Durée : {{ cours['duree'] }}h<br>
+                          <a href="{{ url_for('detail_cours', id=cours['id']) }}">Détails du cours</a>
+                      </div>
                     {% endif %}
                 {% endfor %}
             </td>
