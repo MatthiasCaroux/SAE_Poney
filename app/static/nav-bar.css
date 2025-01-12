@@ -1,86 +1,112 @@
 .navbar-custom {
-    background-color: white;
-    padding: 10px 20px;
+    background-color: #001f3f; 
+    padding: 15px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    height: 125px;
 }
 
 .navbar-brand {
-    margin-right: 100px;
+    display: flex;
+    align-items: center;
+    font-size: 1.5em;
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none;
+    margin-right: 50px;
 }
+
+
+.nav-link.icon img {
+    height: 40px; /* Taille de l'image agrandie */
+    width: auto; /* Conserve les proportions */
+    display: block; /* Supprime tout comportement lié au texte inline */
+    margin: 0 auto; /* Centre l'image dans son conteneur */
+}
+
+
+
 
 .navbar-nav {
     display: flex;
-    justify-content: space-between; /* Sépare les deux groupes de boutons */
     align-items: center;
-    width: 100%;
+    gap: 20px; /* Espacement uniforme entre les éléments */
 }
 
 .navbar-nav .nav-link {
-    border: 1px solid #000;
-    color: #000;
-    text-align: center;
-    font-size: 1.2em;
-    padding: 15px 25px; /* Ajuste la hauteur des boutons */
-    margin: 0 5px; /* Marges horizontales par défaut */
-    flex: 1; /* Assure une largeur égale pour tous les boutons principaux */
-    border-radius: 5px; /* Bordures arrondies */
-    white-space: nowrap;
+    color: #ffffff;
+    text-transform: uppercase; /* Met le texte en majuscules */
+    font-size: 1em;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px; /* Coins arrondis */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-
-
-
-/* Boutons principaux */
-.navbar-nav .nav-link:not(.login):not(.signup) {
-    flex: 1; /* Les boutons principaux occupent le même espace */
+.navbar-nav .nav-link:hover {
+    background-color: #0062cc; /* Couleur de fond au survol */
+    color: #fff; /* Couleur du texte au survol */
 }
 
-/* Hover effet pour les liens */
-.navbar-custom .nav-link:hover {
-    background-color: #bbbbbb;
-}
-
-/* Bouton "Se connecter" */
 .nav-link.login {
-    margin-left: 100px; /* Décale "Se connecter" des autres boutons */
-    background-color: #d3d3d3;
-    color: #000000;
-    flex: 1; /* Empêche "Se connecter" d'occuper plus d'espace que nécessaire */
+    background-color: transparent;
+    border: 2px solid #ffffff;
+    border-radius: 5px;
+    padding: 8px 15px;
+    transition: all 0.3s ease;
+    margin-right: 15px; /* Ajout d'un espace entre les boutons */
 }
 
-.nav-link.icon {
-    border : none;
-    margin-left: 50px; /* Décale "l'icone" des autres boutons */
-
-
+.nav-link.login:hover {
+    background-color: #ffffff;
+    color: #001f3f;
 }
 
-/* Bouton "S'inscrire" */
 .nav-link.signup {
-    background-color: #001f3f;
-    margin-left: 10px; /* Écart avec "Se connecter" */
+    background-color: #28a745;
     color: #fff;
     font-weight: bold;
-    flex: 1; /* Empêche "S'inscrire" d'occuper plus d'espace que nécessaire */
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
 }
 
-/* Logo */
-#image_nav {    
-    border-radius: 5%;
-    margin-right: 10px;
+.nav-link.signup:hover {
+    background-color: #218838;
 }
 
-/* Ombre pour la navbar */
-nav {
-    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
-}
-
-/* Structure globale */
-body {
+/* Pour l'icône de langue */
+.nav-link.icon {
+    border: none;
     display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-left: 20px; /* Décale correctement l'icône */
 }
 
-main {
-    flex: 1;
+.nav-link.icon img {
+    height: 30px; /* Taille agrandie de l'icône */
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .navbar-nav {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .navbar-custom {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-link.login,
+    .nav-link.signup {
+        width: 100%;
+        text-align: center;
+    }
 }
