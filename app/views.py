@@ -509,6 +509,11 @@ def create_moniteur():
         username = request.form.get("username")
         password = request.form.get("password")
 
+        m = sha256()
+        m.update(password.encode())
+        hashed_password = m.hexdigest()
+
+
         # Validation des données
         if not nom or not prenom or not username or not password:
             flash("Tous les champs sont obligatoires.", "danger")
@@ -539,7 +544,7 @@ def create_moniteur():
                 INSERT INTO User (username, password, nom, prenom, role)
                 VALUES (%s, %s, %s, %s, 'moniteur')
             """
-            cursor.execute(query_user, (username, password, nom, prenom))
+            cursor.execute(query_user, (username, hashed_password, nom, prenom))
 
             # Confirmer les changements
             mysql.connection.commit()
