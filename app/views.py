@@ -204,11 +204,15 @@ def poney():
 
 @app.route("/reservation/<id>")
 def reservation(id):
-    cours = get_cours_programme_by_id(id)
+    cours = get_cours_Realise_by_idCours(id)
     prenom,nom = get_prenom_nom_by_current_user(current_user.username)
     user = get_user(prenom,nom)
-    poids = get_adherent(prenom,nom).poids
+    adherent = get_adherent(prenom,nom)
+    poids = adherent.poids
+
     listeponey = get_poney_dispo(id,poids)
+    if get_reservation_by_idcours_adherent(cours.idCoursRealise,adherent.idAdherent) is not None:
+        return render_template("erreur_reserver.html",erreur="Vous avez déjà réservé ce cours") 
     return render_template("reservation.html", cours=cours, listeponey=listeponey, id = id)
 
 
@@ -509,6 +513,11 @@ def create_moniteur():
         username = request.form.get("username")
         password = request.form.get("password")
 
+        m = sha256()
+        m.update(password.encode())
+        hashed_password = m.hexdigest()
+
+
         # Validation des données
         if not nom or not prenom or not username or not password:
             flash("Tous les champs sont obligatoires.", "danger")
@@ -539,7 +548,7 @@ def create_moniteur():
                 INSERT INTO User (username, password, nom, prenom, role)
                 VALUES (%s, %s, %s, %s, 'moniteur')
             """
-            cursor.execute(query_user, (username, password, nom, prenom))
+            cursor.execute(query_user, (username, hashed_password, nom, prenom))
 
             # Confirmer les changements
             mysql.connection.commit()
@@ -562,13 +571,12 @@ def all_reservation():
     reservations =get_reservation_by_adherent(adherent.idAdherent)
     listecours = dict()
     listeponey = dict()
+
     for reservation in reservations:
-        listecours[reservation.idReserver] = get_cours_programme_by_id(reservation.idCoursRealise)
+        listecours[reservation.idReserver] = get_cours_Realise_by_id(reservation.idCoursRealise)
+        print(listecours[reservation.idReserver].idCours)
+        print(listecours[reservation.idReserver].idCoursRealise)
         listeponey[reservation.idReserver] = get_poney_by_id(reservation.idPoney)
-        print(listecours[reservation.idReserver].date)
-        print(listeponey[reservation.idReserver].nomPoney)
-    print(reservations)
-    print
     return render_template("all_reservation.html",reservations=reservations,listecours=listecours,listeponey=listeponey)
 
 

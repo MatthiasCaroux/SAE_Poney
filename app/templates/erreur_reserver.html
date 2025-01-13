@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='erreur.css') }}">
+{% endblock %}
+{%block content%}
+<h1> {{erreur}}</h1>
+{%endblock%}

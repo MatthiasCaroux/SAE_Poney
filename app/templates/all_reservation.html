@@ -11,7 +11,7 @@
             <li class="reservation-item">
                 <p class="reservation-date">Vous avez réservé pour le cours du <strong>{{ listecours[reservation.idReserver].date }}</strong></p>
                 <p class="reservation-poney">Vous avez été affecté avec le poney <strong>{{ listeponey[reservation.idReserver].nomPoney }}</strong></p>
-                <a class="detail-link" href="{{ url_for('detail_cours', id=reservation.idCoursRealise) }}">Voir le détail du cours</a>
+                <a class="detail-link" href="{{ url_for('detail_cours', id=listecours[reservation.idReserver].idCours) }}">Voir le détail du cours</a>
             </li>
             {% endfor %}
         </ul>
