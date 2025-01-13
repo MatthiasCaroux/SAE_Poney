@@ -39,6 +39,14 @@ class CoursProgramme:
         self.prix = prix
         self.niveau = niveau
         self.nbpersonnes = nbpersonnes
+class CoursRealise:
+    def __init__(self, idCoursRealise,date,semaine,mois,idCours):
+        self.idCoursRealise = idCoursRealise
+        self.date = date
+        self.Semaine = semaine
+        self.Mois = mois
+        self.idCours = idCours
+
 
 def get_cours_programme():
     cursor = mysql.connection.cursor()
@@ -50,13 +58,26 @@ def get_cours_programme():
         res.append(CoursProgramme(c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7]))
     return res
 
-def get_cours_programme_by_id(id):
+def get_cours_Realise_by_id(id):
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM CoursProgramme WHERE idCours = %s", (id,))
+    cursor.execute("SELECT * FROM CoursRealise WHERE idCoursRealise = %s", (id,))
     cours_programme = cursor.fetchone()
     cursor.close()
-    return CoursProgramme(cours_programme[0], cours_programme[1], cours_programme[2], cours_programme[3], cours_programme[4], cours_programme[5], cours_programme[6], cours_programme[7])
+    return CoursRealise(cours_programme[0], cours_programme[1], cours_programme[2], cours_programme[3], cours_programme[4], )
 
+
+def get_cours_Realise_by_idCours(id):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM CoursRealise WHERE idCours = %s", (id,))
+    cours_programme = cursor.fetchone()
+    cursor.close()
+    return CoursRealise(cours_programme[0], cours_programme[1], cours_programme[2], cours_programme[3], cours_programme[4], )
+def get_idcours_by_id_cours_realise(id):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT idCours from CoursRealise WHERE idCoursRealise = %s", (id,))
+    idcours = cursor.fetchone()
+    cursor.close()
+    return idcours[0] if idcours else None
 
 def get_moniteurs():
     cursor = mysql.connection.cursor()
@@ -292,3 +313,11 @@ def get_cours_realise_by_id_programme(id):
     cours_realise = cursor.fetchone()
     cursor.close()
     return cours_realise[0] if cours_realise else None
+
+def get_reservation_by_idcours_adherent(id_cours,idadherent):
+    cursor = mysql.connection.cursor()
+    query = "SELECT idReserver from Reserver where idCoursRealise = %s and idAdherent = %s"
+    cursor.execute(query, (id_cours,idadherent,))
+    reservation = cursor.fetchone()
+    cursor.close()
+    return reservation[0] if reservation else None
