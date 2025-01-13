@@ -195,31 +195,30 @@ DELIMITER |
 
 DELIMITER |
 
-CREATE TRIGGER Poney_repose
-BEFORE INSERT ON Reserver
-FOR EACH ROW
-BEGIN
-    DECLARE conflict_count INT;
+-- CREATE OR REPLACE TRIGGER Poney_repose
+-- BEFORE INSERT ON Reserver
+-- FOR EACH ROW
+-- BEGIN
+--     DECLARE conflict_count INT;
 
-    SELECT COUNT(*)
-    INTO conflict_count
-    FROM Reserver r
-    JOIN CoursProgramme cr ON r.idCours = cr.idCours
-    WHERE r.idPoney = NEW.idPoney
-    AND cr.DateJour = (SELECT DateJour FROM CoursProgramme WHERE idCours = NEW.idCours)
-    AND (
-        TIMESTAMPADD(HOUR, 1, cr.Heure) > (SELECT Heure FROM CoursRealise WHERE idCoursRealise = NEW.idCoursRealise)
-        OR TIMESTAMPADD(HOUR, -1, cr.Heure) < (SELECT Heure FROM CoursRealise WHERE idCoursRealise = NEW.idCoursRealise)
-    );
+--     SELECT COUNT(*)
+--     INTO conflict_count
+--     FROM Reserver r
+--     JOIN CoursProgramme cr ON r.idCours = cr.idCours
+--     WHERE r.idPoney = NEW.idPoney
+--     AND cr.DateJour = (SELECT DateJour FROM CoursProgramme WHERE idCours = NEW.idCoursRealise)
+--     AND (
+--         TIMESTAMPADD(HOUR, 1, cr.Heure) > (SELECT Heure FROM CoursRealise WHERE idCoursRealise = NEW.idCoursRealise)
+--         OR TIMESTAMPADD(HOUR, -1, cr.Heure) < (SELECT Heure FROM CoursRealise WHERE idCoursRealise = NEW.idCoursRealise)
+--     );
 
-    IF conflict_count > 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Le poney est déjà réservé dans l\'heure précédente ou suivante.';
-    END IF;
-END |
+--     IF conflict_count > 0 THEN
+--         SIGNAL SQLSTATE '45000'
+--         SET MESSAGE_TEXT = 'Le poney est déjà réservé dans l\'heure précédente ou suivante.';
+--     END IF;
+-- END |
 
-DELIMITER ;
-
+-- DELIMITER ;
 
 DELIMITER |
 
