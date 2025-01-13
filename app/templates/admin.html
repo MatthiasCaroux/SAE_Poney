@@ -88,8 +88,8 @@
             {% for idPoney, details in dico_poney.items() %}
                 <tr>
                     <td>{{ idPoney }}</td>
-                    <td>{{ details.nomPoney }}</td>
                     <td>{{ details.charge_max }}</td>
+                    <td>{{ details.nomPoney }}</td>
                 </tr>
             {% else %}
                 <tr>
@@ -99,7 +99,7 @@
         </tbody>
     </table>
 
-    <!-- Boutons d'actions -->
+  
     <div class="mt-4">
         <a href="{{ url_for('create_moniteur') }}" class="btn btn-success mt-3">Créer un Moniteur</a>
         <a href="{{ url_for('admin_create_cours') }}" class="btn btn-primary mt-3">Créer un Cours</a>
