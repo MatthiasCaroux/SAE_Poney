@@ -825,7 +825,7 @@ def ajouter_poney():
             cursor = mysql.connection.cursor()
             query = """
                 INSERT INTO Poney (nomPoney, charge_max, description, image)
-                VALUES (%s, %s, %s,/static/images/pepito.jpg) 
+                VALUES (%s, %s, %s,'/static/images/pepito.jpg') 
             """
             cursor.execute(query, (nom, charge_max,description))
             mysql.connection.commit()
