@@ -22,6 +22,14 @@ app.config['SECRET_KEY'] = 'secret'
 # app.config['MYSQL_PASSWORD'] = 'matthias1'
 # app.config['MYSQL_DB'] = 'sae_poney'
 # app.config['SECRET_KEY'] = 'secret'
+# app.config['SECRET_KEY'] = 'secret'
+
+# app.config['MYSQL_HOST'] = 'servinfo-maria'
+# app.config['MYSQL_USER'] = 'niveau'
+# app.config['MYSQL_PASSWORD'] = 'niveau'
+# app.config['MYSQL_DB'] = 'DBniveau' #mettre sa propre BD
+# app.config['SECRET_KEY'] = 'secret'
+
 
 
 # app.config['MYSQL_HOST'] = 'localhost'
