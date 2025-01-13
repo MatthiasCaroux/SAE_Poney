@@ -839,3 +839,39 @@ def ajouter_poney():
             return redirect(url_for("ajouter_poney"))
 
     return render_template("ajouter_poney.html")
+
+
+@app.route("/passer_moniteur", methods=["POST"])
+def passer_moniteur():
+    if current_user.username != "admin":
+        flash("Accès réservé à l'administrateur.", "danger")
+        return redirect(url_for("home"))
+
+
+    username = request.form.get("id")
+    print(username)
+
+    if not username:
+        flash("Nom d'utilisateur non fourni.", "danger")
+        return redirect(url_for("admin"))
+
+    try:
+
+        cursor = mysql.connection.cursor()
+        query = """
+            UPDATE User
+            SET role = 'moniteur'
+            WHERE username = %s
+        """
+        cursor.execute(query, (username,))
+        mysql.connection.commit()
+        cursor.close()
+
+        flash("Le compte a été promu moniteur avec succès.", "success")
+
+    except :
+        mysql.connection.rollback()
+        flash("Erreur lors de la promotion du compte.", "danger")
+
+
+    return redirect(url_for("admin"))
